@@ -10,6 +10,7 @@
 #include <freeglut.h>
 #include <math.h>
 #include <stdio.h>
+#include <time.h>
 
 
  /******************************************************************************
@@ -138,7 +139,11 @@ void display(void)
 
 	glBegin(GL_POINTS);
 
-	glVertex2f(particleSystem[0].position.x, particleSystem[0].position.y);
+	for (int i = 0; i < MAX_PARTICLES; i++)
+	{
+		glVertex2f(particleSystem[i].position.x, particleSystem[i].position.y);
+	}
+	
 
 	glEnd();
 
@@ -209,10 +214,16 @@ void idle(void)
  */
 void init(void)
 {
-	particleSystem[0].position.x = 0.0f;
-	particleSystem[0].position.y = 1.0f;
-	particleSystem[0].active = 1;
-	particleSystem[0].dy = 1 * FRAME_TIME_SEC;
+	srand(time(NULL));
+
+	for (int i = 0; i < MAX_PARTICLES; i++)
+	{
+		particleSystem[i].position.x = ((float)rand() / RAND_MAX * 2.0f) - 0.5f;
+		particleSystem[i].position.y = ((float)rand() / RAND_MAX) * 2 + 1.5f;
+		particleSystem[i].active = 1;
+		particleSystem[i].dy = 1 * FRAME_TIME_SEC * (((float)rand() / RAND_MAX)+1);
+	}
+	
 }
 
 /*
@@ -265,10 +276,20 @@ void think(void)
 		brightness of lights, etc.
 	*/
 
-	if (particleSystem[0].position.y <= -1)
-		particleSystem[0].position.y = 1;
+	for (int i = 0; i < MAX_PARTICLES; i++)
+	{
+		if (particleSystem[i].position.y <= -1) {
+			particleSystem[i].position.y = ((float)rand() / RAND_MAX) + 1.5f;;
+			((float)rand() / RAND_MAX * 2.0f) - 0.2f;
+			particleSystem[i].position.x = ((float)rand() / RAND_MAX * 2.0f) - 0.6f;
+			particleSystem[i].dy = 1 * FRAME_TIME_SEC * (((float)rand() / RAND_MAX) + 1);
+			particleSystem[i].dy = 1 * FRAME_TIME_SEC * (((float)rand() / RAND_MAX) + 1);
+		}
 
-	particleSystem[0].position.y -= particleSystem[0].dy;
+		particleSystem[i].position.x -= 0.35 * FRAME_TIME_SEC;
+		particleSystem[i].position.y -= particleSystem[i].dy;
+	}
+	
 
 }
 
