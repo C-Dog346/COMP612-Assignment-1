@@ -88,7 +88,7 @@ void main(int argc, char** argv)
 	// Initialize the OpenGL window.
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-	glutInitWindowSize(700, 700);
+	glutInitWindowSize(900, 900);
 	glutCreateWindow("Animation");
 
 	// Set up the scene.
@@ -134,7 +134,18 @@ void display(void)
 	*/
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	glColor3f(1.0, 0, 0);
+	glBegin(GL_POLYGON);
+
+	glColor3f(0.878f, 0.947f, 0.802f);
+	glVertex2f(-1.0f, -1.0f);
+	glVertex2f(1.0f, -1.0f);
+	glColor3f(0.678f, 0.847f, 0.902f);
+	glVertex2f(1.0f, 1.0f);
+	glVertex2f(-1.0f, 1.0f);
+
+	glEnd();
+
+	/*glColor3f(1.0, 0, 0);
 	glPointSize(30.0f);
 
 	glBegin(GL_POINTS);
@@ -145,7 +156,7 @@ void display(void)
 	}
 	
 
-	glEnd();
+	glEnd();*/
 
 	glutSwapBuffers();
 
