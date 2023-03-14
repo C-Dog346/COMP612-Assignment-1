@@ -145,18 +145,20 @@ void display(void)
 
 	glEnd();
 
-	/*glColor3f(1.0, 0, 0);
-	glPointSize(30.0f);
-
-	glBegin(GL_POINTS);
+	glColor3f(0.753, 0.753, 0.753);
 
 	for (int i = 0; i < MAX_PARTICLES; i++)
 	{
+		glPointSize(particleSystem[i].size);
+
+		glBegin(GL_POINTS);
 		glVertex2f(particleSystem[i].position.x, particleSystem[i].position.y);
+
+		glEnd();
 	}
 	
 
-	glEnd();*/
+	
 
 	glutSwapBuffers();
 
@@ -230,9 +232,10 @@ void init(void)
 	for (int i = 0; i < MAX_PARTICLES; i++)
 	{
 		particleSystem[i].position.x = ((float)rand() / RAND_MAX * 2.0f) - 0.5f;
-		particleSystem[i].position.y = ((float)rand() / RAND_MAX) * 2 + 1.5f;
+		particleSystem[i].position.y = ((float)rand() / RAND_MAX) * 2.0f + 1.5f;
 		particleSystem[i].active = 1;
 		particleSystem[i].dy = 1 * FRAME_TIME_SEC * (((float)rand() / RAND_MAX)+1);
+		particleSystem[i].size = ((float)rand() / RAND_MAX) * 9.0f + 1.0f;
 	}
 	
 }
