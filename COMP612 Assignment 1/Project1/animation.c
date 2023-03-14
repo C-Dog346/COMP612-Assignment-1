@@ -62,6 +62,22 @@ void think(void);
  * Animation-Specific Setup (Add your own definitions, constants, and globals here)
  ******************************************************************************/
 
+#define MAX_PARTICLES 1000
+
+typedef struct {
+	float x;
+	float y;
+} Position2d;
+
+typedef struct {
+	Position2d position; //x y location of particle
+	float size; // GL point size
+	float dy; //velocity
+	int active; //is inactive
+} Particle_t;
+
+Particle_t particleSystem[MAX_PARTICLES];
+
  /******************************************************************************
   * Entry Point (don't put anything except the main function here)
   ******************************************************************************/
@@ -71,7 +87,7 @@ void main(int argc, char** argv)
 	// Initialize the OpenGL window.
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-	glutInitWindowSize(1000, 800);
+	glutInitWindowSize(700, 700);
 	glutCreateWindow("Animation");
 
 	// Set up the scene.
@@ -115,6 +131,19 @@ void display(void)
 		Remember to add prototypes for any new functions to the "Animation-Specific
 		Function Prototypes" section near the top of this template.
 	*/
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	glColor3f(1.0, 0, 0);
+	glPointSize(30.0f);
+
+	glBegin(GL_POINTS);
+
+	glVertex2f(particleSystem[0].position.x, particleSystem[0].position.y);
+
+	glEnd();
+
+	glutSwapBuffers();
+
 }
 
 /*
@@ -163,7 +192,7 @@ void idle(void)
 	}
 
 	// Begin processing the next frame.
-
+	
 	frameStartTime = glutGet(GLUT_ELAPSED_TIME); // Record when we started work on the new frame.
 
 	think(); // Update our simulated world before the next call to display().
@@ -180,6 +209,10 @@ void idle(void)
  */
 void init(void)
 {
+	particleSystem[0].position.x = 0.0f;
+	particleSystem[0].position.y = 1.0f;
+	particleSystem[0].active = 1;
+	particleSystem[0].dy = 1 * FRAME_TIME_SEC;
 }
 
 /*
@@ -231,6 +264,12 @@ void think(void)
 		You can use this same approach to animate other things like color, opacity,
 		brightness of lights, etc.
 	*/
+
+	if (particleSystem[0].position.y <= -1)
+		particleSystem[0].position.y = 1;
+
+	particleSystem[0].position.y -= particleSystem[0].dy;
+
 }
 
 /******************************************************************************/
