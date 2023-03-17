@@ -10,6 +10,7 @@
 #include <freeglut.h>
 #include <math.h>
 #include <stdio.h>
+#include <time.h>
 
 
  /******************************************************************************
@@ -87,7 +88,7 @@ void main(int argc, char** argv)
 	// Initialize the OpenGL window.
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-	glutInitWindowSize(700, 700);
+	glutInitWindowSize(900, 900);
 	glutCreateWindow("Animation");
 
 	// Set up the scene.
@@ -133,14 +134,31 @@ void display(void)
 	*/
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	glColor3f(1.0, 0, 0);
-	glPointSize(30.0f);
+	glBegin(GL_POLYGON);
 
-	glBegin(GL_POINTS);
-
-	glVertex2f(particleSystem[0].position.x, particleSystem[0].position.y);
+	glColor3f(0.878f, 0.947f, 0.802f);
+	glVertex2f(-1.0f, -1.0f);
+	glVertex2f(1.0f, -1.0f);
+	glColor3f(0.678f, 0.847f, 0.902f);
+	glVertex2f(1.0f, 1.0f);
+	glVertex2f(-1.0f, 1.0f);
 
 	glEnd();
+
+	glColor3f(0.753, 0.753, 0.753);
+
+	for (int i = 0; i < MAX_PARTICLES; i++)
+	{
+		glPointSize(particleSystem[i].size);
+
+		glBegin(GL_POINTS);
+		glVertex2f(particleSystem[i].position.x, particleSystem[i].position.y);
+
+		glEnd();
+	}
+	
+
+	
 
 	glutSwapBuffers();
 
@@ -209,10 +227,17 @@ void idle(void)
  */
 void init(void)
 {
-	particleSystem[0].position.x = 0.0f;
-	particleSystem[0].position.y = 1.0f;
-	particleSystem[0].active = 1;
-	particleSystem[0].dy = 1 * FRAME_TIME_SEC;
+	srand(time(NULL));
+
+	for (int i = 0; i < MAX_PARTICLES; i++)
+	{
+		particleSystem[i].position.x = ((float)rand() / RAND_MAX * 2.0f) - 0.5f;
+		particleSystem[i].position.y = ((float)rand() / RAND_MAX) * 2.0f + 1.5f;
+		particleSystem[i].active = 1;
+		particleSystem[i].dy = 1 * FRAME_TIME_SEC * (((float)rand() / RAND_MAX)+1);
+		particleSystem[i].size = ((float)rand() / RAND_MAX) * 9.0f + 1.0f;
+	}
+	
 }
 
 /*
@@ -265,10 +290,20 @@ void think(void)
 		brightness of lights, etc.
 	*/
 
-	if (particleSystem[0].position.y <= -1)
-		particleSystem[0].position.y = 1;
+	for (int i = 0; i < MAX_PARTICLES; i++)
+	{
+		if (particleSystem[i].position.y <= -1) {
+			particleSystem[i].position.y = ((float)rand() / RAND_MAX) + 1.5f;;
+			((float)rand() / RAND_MAX * 2.0f) - 0.2f;
+			particleSystem[i].position.x = ((float)rand() / RAND_MAX * 2.0f) - 0.6f;
+			particleSystem[i].dy = 1 * FRAME_TIME_SEC * (((float)rand() / RAND_MAX) + 1);
+			particleSystem[i].dy = 1 * FRAME_TIME_SEC * (((float)rand() / RAND_MAX) + 1);
+		}
 
-	particleSystem[0].position.y -= particleSystem[0].dy;
+		particleSystem[i].position.x -= 0.35 * FRAME_TIME_SEC;
+		particleSystem[i].position.y -= particleSystem[i].dy;
+	}
+	
 
 }
 

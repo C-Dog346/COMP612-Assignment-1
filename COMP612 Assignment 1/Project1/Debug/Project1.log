@@ -1,10 +1,10 @@
-﻿  C:\Users\nhs9115\source\repos\COMP612-Assignment-1\COMP612 Assignment 1\Project1\freeglut\bin\freeglut.dll
+﻿  C:\Users\Callum\Documents\School\Uni\GitHub Repos\COMP612\COMP612 Assignment 1\Project1\freeglut\bin\freeglut.dll
   1 File(s) copied
   animation.c
-C:\Users\nhs9115\source\repos\COMP612-Assignment-1\COMP612 Assignment 1\Project1\animation.c(148,17): warning C4305: 'function': truncation from 'double' to 'GLfloat'
-C:\Users\nhs9115\source\repos\COMP612-Assignment-1\COMP612 Assignment 1\Project1\animation.c(148,24): warning C4305: 'function': truncation from 'double' to 'GLfloat'
-C:\Users\nhs9115\source\repos\COMP612-Assignment-1\COMP612 Assignment 1\Project1\animation.c(148,31): warning C4305: 'function': truncation from 'double' to 'GLfloat'
-C:\Users\nhs9115\source\repos\COMP612-Assignment-1\COMP612 Assignment 1\Project1\animation.c(230,8): warning C4244: 'function': conversion from 'time_t' to 'unsigned int', possible loss of data
-C:\Users\nhs9115\source\repos\COMP612-Assignment-1\COMP612 Assignment 1\Project1\animation.c(297,38): warning C4552: '-': result of expression not used
-C:\Users\nhs9115\source\repos\COMP612-Assignment-1\COMP612 Assignment 1\Project1\animation.c(303,40): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
-  Project1.vcxproj -> C:\Users\nhs9115\source\repos\COMP612-Assignment-1\COMP612 Assignment 1\Debug\Assignment Draft.exe
+C:\Users\Callum\Documents\School\Uni\GitHub Repos\COMP612\COMP612 Assignment 1\Project1\animation.c(148,17): warning C4305: 'function': truncation from 'double' to 'GLfloat'
+C:\Users\Callum\Documents\School\Uni\GitHub Repos\COMP612\COMP612 Assignment 1\Project1\animation.c(148,24): warning C4305: 'function': truncation from 'double' to 'GLfloat'
+C:\Users\Callum\Documents\School\Uni\GitHub Repos\COMP612\COMP612 Assignment 1\Project1\animation.c(148,31): warning C4305: 'function': truncation from 'double' to 'GLfloat'
+C:\Users\Callum\Documents\School\Uni\GitHub Repos\COMP612\COMP612 Assignment 1\Project1\animation.c(230,8): warning C4244: 'function': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\Callum\Documents\School\Uni\GitHub Repos\COMP612\COMP612 Assignment 1\Project1\animation.c(297,38): warning C4552: '-': result of expression not used
+C:\Users\Callum\Documents\School\Uni\GitHub Repos\COMP612\COMP612 Assignment 1\Project1\animation.c(303,40): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+  Project1.vcxproj -> C:\Users\Callum\Documents\School\Uni\GitHub Repos\COMP612\COMP612 Assignment 1\Debug\Assignment Draft.exe
