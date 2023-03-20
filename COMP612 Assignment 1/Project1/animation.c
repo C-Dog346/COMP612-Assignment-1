@@ -79,7 +79,7 @@ typedef struct {
 
 Particle_t particleSystem[MAX_PARTICLES];
 
-float vertices[5][2];
+float vertices[10][2];
 
  /******************************************************************************
   * Entry Point (don't put anything except the main function here)
@@ -149,6 +149,48 @@ void display(void)
 
 	glEnd();
 
+	// Terrain
+	float totalX = 0;
+	
+	while (totalX < 2.0f) {
+		for (int i = 1; i < 11; i++)
+	{
+		if (i == 0) {
+			glBegin(GL_POLYGON);
+
+			glColor3f(0.2f, 0.2f, 0.2f);
+			glVertex2f(-1.0f, -1.0f);
+			glVertex2f(-1.0f + vertices[i][0], -1.0f);
+			glColor3f(0.98f, 0.98f, 0.98f);
+			glVertex2f(-1.0f + vertices[i][0], vertices[i][1]);
+			glVertex2f(-1.0f, vertices[i-1][1]);
+
+			glEnd();
+
+			totalX += vertices[i][0];
+		}
+
+		else {
+			glBegin(GL_POLYGON);
+
+			glColor3f(0.2f, 0.2f, 0.2f);
+			glVertex2f(-1.0f + totalX, -1.0f);
+			glVertex2f(-1.0f + vertices[i][0] + totalX, -1.0f);
+			glColor3f(0.98f, 0.98f, 0.98f);
+			glVertex2f(-1.0f + vertices[i][0] + totalX, vertices[i][1]);
+			glVertex2f(-1.0f + totalX, vertices[i-1][1]);
+
+			glEnd();
+
+			totalX += vertices[i][0];
+		}
+
+
+
+	}
+	}
+	
+
 
 	// Snow
 	glColor3f(0.753f, 0.753f, 0.753f);
@@ -161,22 +203,6 @@ void display(void)
 		glVertex2f(particleSystem[i].position.x, particleSystem[i].position.y);
 
 		glEnd();
-	}
-
-	// Terrain
-	for (int i = 0; i < 5; i++)
-	{
-		if (i == 0) {
-			glBegin(GL_POLYGON);
-
-			glVertex2f(-1.0f, -1.0f);
-			glVertex2f(-1.0f + verticies[i][0], -1.0f);
-			glVertex2f{-1.0f + verticies[i][0], verticies[i][1]);
-			glVertex2f(-1.0f, verticies[i][1]);
-
-			glEnd();
-		}
-		
 	}
 	
 
@@ -260,10 +286,10 @@ void init(void)
 	}
 
 	// init the 
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < 10; i++)
 	{
 		vertices[i][0] = (float)rand() / RAND_MAX * 0.3f + 0.2f;
-		vertices[i][1] = (float)rand() / RAND_MAX * 0.3f + 0.2f;
+		vertices[i][1] = (float)rand() / RAND_MAX * 0.4f - 0.3f;
 	}	
 }
 
