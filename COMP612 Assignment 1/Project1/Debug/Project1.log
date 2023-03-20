@@ -1,10 +1,24 @@
-﻿  C:\Users\Callum\Documents\School\Uni\GitHub Repos\COMP612\COMP612 Assignment 1\Project1\freeglut\bin\freeglut.dll
+﻿  C:\Users\nhs9115\source\repos\COMP612-Assignment-1\COMP612 Assignment 1\Project1\freeglut\bin\freeglut.dll
   1 File(s) copied
   animation.c
-C:\Users\Callum\Documents\School\Uni\GitHub Repos\COMP612\COMP612 Assignment 1\Project1\animation.c(148,17): warning C4305: 'function': truncation from 'double' to 'GLfloat'
-C:\Users\Callum\Documents\School\Uni\GitHub Repos\COMP612\COMP612 Assignment 1\Project1\animation.c(148,24): warning C4305: 'function': truncation from 'double' to 'GLfloat'
-C:\Users\Callum\Documents\School\Uni\GitHub Repos\COMP612\COMP612 Assignment 1\Project1\animation.c(148,31): warning C4305: 'function': truncation from 'double' to 'GLfloat'
-C:\Users\Callum\Documents\School\Uni\GitHub Repos\COMP612\COMP612 Assignment 1\Project1\animation.c(230,8): warning C4244: 'function': conversion from 'time_t' to 'unsigned int', possible loss of data
-C:\Users\Callum\Documents\School\Uni\GitHub Repos\COMP612\COMP612 Assignment 1\Project1\animation.c(297,38): warning C4552: '-': result of expression not used
-C:\Users\Callum\Documents\School\Uni\GitHub Repos\COMP612\COMP612 Assignment 1\Project1\animation.c(303,40): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
-  Project1.vcxproj -> C:\Users\Callum\Documents\School\Uni\GitHub Repos\COMP612\COMP612 Assignment 1\Debug\Assignment Draft.exe
+C:\Users\nhs9115\source\repos\COMP612-Assignment-1\COMP612 Assignment 1\Project1\animation.c(173,32): error C2065: 'verticies': undeclared identifier
+C:\Users\nhs9115\source\repos\COMP612-Assignment-1\COMP612 Assignment 1\Project1\animation.c(173,34): error C2109: subscript requires array or pointer type
+C:\Users\nhs9115\source\repos\COMP612-Assignment-1\COMP612 Assignment 1\Project1\animation.c(173,4): error C2198: 'glVertex2f': too few arguments for call
+C:\Users\nhs9115\source\repos\COMP612-Assignment-1\COMP612 Assignment 1\Project1\animation.c(174,14): error C2143: syntax error: missing ';' before '{'
+C:\Users\nhs9115\source\repos\COMP612-Assignment-1\COMP612 Assignment 1\Project1\animation.c(174,4): warning C4550: expression evaluates to a function which is missing an argument list
+C:\Users\nhs9115\source\repos\COMP612-Assignment-1\COMP612 Assignment 1\Project1\animation.c(174,32): error C2065: 'verticies': undeclared identifier
+C:\Users\nhs9115\source\repos\COMP612-Assignment-1\COMP612 Assignment 1\Project1\animation.c(174,34): error C2109: subscript requires array or pointer type
+C:\Users\nhs9115\source\repos\COMP612-Assignment-1\COMP612 Assignment 1\Project1\animation.c(174,49): error C2065: 'verticies': undeclared identifier
+C:\Users\nhs9115\source\repos\COMP612-Assignment-1\COMP612 Assignment 1\Project1\animation.c(174,51): error C2109: subscript requires array or pointer type
+C:\Users\nhs9115\source\repos\COMP612-Assignment-1\COMP612 Assignment 1\Project1\animation.c(174,55): error C2059: syntax error: ')'
+C:\Users\nhs9115\source\repos\COMP612-Assignment-1\COMP612 Assignment 1\Project1\animation.c(175,31): error C2065: 'verticies': undeclared identifier
+C:\Users\nhs9115\source\repos\COMP612-Assignment-1\COMP612 Assignment 1\Project1\animation.c(175,33): error C2109: subscript requires array or pointer type
+C:\Users\nhs9115\source\repos\COMP612-Assignment-1\COMP612 Assignment 1\Project1\animation.c(175,4): error C2198: 'glVertex2f': too few arguments for call
+C:\Users\nhs9115\source\repos\COMP612-Assignment-1\COMP612 Assignment 1\Project1\animation.c(191,1): error C2143: syntax error: missing ';' before '{'
+C:\Users\nhs9115\source\repos\COMP612-Assignment-1\COMP612 Assignment 1\Project1\animation.c(198,1): error C2143: syntax error: missing ';' before '{'
+C:\Users\nhs9115\source\repos\COMP612-Assignment-1\COMP612 Assignment 1\Project1\animation.c(199,21): error C2065: 'key': undeclared identifier
+C:\Users\nhs9115\source\repos\COMP612-Assignment-1\COMP612 Assignment 1\Project1\animation.c(220,1): error C2143: syntax error: missing ';' before '{'
+C:\Users\nhs9115\source\repos\COMP612-Assignment-1\COMP612 Assignment 1\Project1\animation.c(249,1): error C2143: syntax error: missing ';' before '{'
+C:\Users\nhs9115\source\repos\COMP612-Assignment-1\COMP612 Assignment 1\Project1\animation.c(250,8): warning C4244: 'function': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\nhs9115\source\repos\COMP612-Assignment-1\COMP612 Assignment 1\Project1\animation.c(279,1): error C2143: syntax error: missing ';' before '{'
+C:\Users\nhs9115\source\repos\COMP612-Assignment-1\COMP612 Assignment 1\Project1\animation.c(127): fatal error C1075: '{': no matching token found

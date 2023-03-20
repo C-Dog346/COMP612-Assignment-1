@@ -79,6 +79,8 @@ typedef struct {
 
 Particle_t particleSystem[MAX_PARTICLES];
 
+float vertices[5][2];
+
  /******************************************************************************
   * Entry Point (don't put anything except the main function here)
   ******************************************************************************/
@@ -134,7 +136,9 @@ void display(void)
 	*/
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	glBegin(GL_POLYGON);
+
+	// Background
+	glBegin(GL_QUADS);
 
 	glColor3f(0.878f, 0.947f, 0.802f);
 	glVertex2f(-1.0f, -1.0f);
@@ -145,7 +149,9 @@ void display(void)
 
 	glEnd();
 
-	glColor3f(0.753, 0.753, 0.753);
+
+	// Snow
+	glColor3f(0.753f, 0.753f, 0.753f);
 
 	for (int i = 0; i < MAX_PARTICLES; i++)
 	{
@@ -156,8 +162,22 @@ void display(void)
 
 		glEnd();
 	}
-	
 
+	// Terrain
+	for (int i = 0; i < 5; i++)
+	{
+		if (i == 0) {
+			glBegin(GL_POLYGON);
+
+			glVertex2f(-1.0f, -1.0f);
+			glVertex2f(-1.0f + verticies[i][0], -1.0f);
+			glVertex2f{-1.0f + verticies[i][0], verticies[i][1]);
+			glVertex2f(-1.0f, verticies[i][1]);
+
+			glEnd();
+		}
+		
+	}
 	
 
 	glutSwapBuffers();
@@ -229,6 +249,7 @@ void init(void)
 {
 	srand(time(NULL));
 
+	// init the particles
 	for (int i = 0; i < MAX_PARTICLES; i++)
 	{
 		particleSystem[i].position.x = ((float)rand() / RAND_MAX * 2.0f) - 0.5f;
@@ -237,7 +258,13 @@ void init(void)
 		particleSystem[i].dy = 1 * FRAME_TIME_SEC * (((float)rand() / RAND_MAX)+1);
 		particleSystem[i].size = ((float)rand() / RAND_MAX) * 9.0f + 1.0f;
 	}
-	
+
+	// init the 
+	for (int i = 0; i < 5; i++)
+	{
+		vertices[i][0] = (float)rand() / RAND_MAX * 0.3f + 0.2f;
+		vertices[i][1] = (float)rand() / RAND_MAX * 0.3f + 0.2f;
+	}	
 }
 
 /*
@@ -293,14 +320,13 @@ void think(void)
 	for (int i = 0; i < MAX_PARTICLES; i++)
 	{
 		if (particleSystem[i].position.y <= -1) {
-			particleSystem[i].position.y = ((float)rand() / RAND_MAX) + 1.5f;;
-			((float)rand() / RAND_MAX * 2.0f) - 0.2f;
+			particleSystem[i].position.y = ((float)rand() / RAND_MAX) + 1.5f;
 			particleSystem[i].position.x = ((float)rand() / RAND_MAX * 2.0f) - 0.6f;
 			particleSystem[i].dy = 1 * FRAME_TIME_SEC * (((float)rand() / RAND_MAX) + 1);
 			particleSystem[i].dy = 1 * FRAME_TIME_SEC * (((float)rand() / RAND_MAX) + 1);
 		}
 
-		particleSystem[i].position.x -= 0.35 * FRAME_TIME_SEC;
+		particleSystem[i].position.x -= 0.35f * FRAME_TIME_SEC;
 		particleSystem[i].position.y -= particleSystem[i].dy;
 	}
 	
