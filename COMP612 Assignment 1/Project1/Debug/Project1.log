@@ -1,5 +1,0 @@
-﻿  C:\Users\nhs9115\source\repos\COMP612-Assignment-1\COMP612 Assignment 1\Project1\freeglut\bin\freeglut.dll
-  1 File(s) copied
-  animation.c
-C:\Users\nhs9115\source\repos\COMP612-Assignment-1\COMP612 Assignment 1\Project1\animation.c(276,8): warning C4244: 'function': conversion from 'time_t' to 'unsigned int', possible loss of data
-  Project1.vcxproj -> C:\Users\nhs9115\source\repos\COMP612-Assignment-1\COMP612 Assignment 1\Debug\Assignment Draft.exe
