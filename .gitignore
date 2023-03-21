@@ -52,7 +52,6 @@ Mkfile.old
 dkms.conf
 
 # VSS Files
-CL.read.1.tlog
-CL.write.1.tlog
+Browse.VC.db
 
 
