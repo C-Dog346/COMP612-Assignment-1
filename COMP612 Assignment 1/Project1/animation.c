@@ -146,7 +146,7 @@ void display(void)
 	glColor3f(0.678f, 0.847f, 0.902f);
 	glVertex2f(1.0f, 1.0f);
 	glVertex2f(-1.0f, 1.0f);
-
+	
 	glEnd();
 
 	// Terrain
