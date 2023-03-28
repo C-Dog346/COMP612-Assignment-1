@@ -185,10 +185,11 @@ void display(void)
 			totalX += vertices[i][0];
 		}
 
+		// Snowman
 
 
 	}
-	}
+}
 	
 
 
