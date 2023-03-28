@@ -198,7 +198,7 @@ void display(void)
 
 	for (int i = 0; i < MAX_PARTICLES; i++)
 	{	
-		glColor4f(0.753f, 0.753f, 0.753f, particleSystem[i].dy);
+		glColor4f(0.753f, 0.753f, 0.753f, particleSystem[i].dy - 0.2f);
 		glPointSize(particleSystem[i].size);
 
 		glBegin(GL_POINTS);
@@ -210,7 +210,6 @@ void display(void)
 	glDisable(GL_BLEND);
 
 	glutSwapBuffers();
-
 }
 
 /*
@@ -285,7 +284,7 @@ void init(void)
 		particleSystem[i].position.x = ((float)rand() / RAND_MAX * 3.5f) - 0.5f;
 		particleSystem[i].position.y = ((float)rand() / RAND_MAX) * 2.0f + 1.5f;
 		particleSystem[i].active = 1;
-		particleSystem[i].dy = (((float)rand() / RAND_MAX)+0.25);
+		particleSystem[i].dy = (((float)rand() / RAND_MAX) + 0.2);
 		particleSystem[i].size = ((float)rand() / RAND_MAX) * 9.0f + 1.0f;
 	}
 
@@ -352,7 +351,7 @@ void think(void)
 		if (particleSystem[i].position.y <= -1) {
 			particleSystem[i].position.x = ((float)rand() / RAND_MAX * 3.5f) - 0.5f;
 			particleSystem[i].position.y = ((float)rand() / RAND_MAX) + 1.5f;
-			particleSystem[i].dy = (((float)rand() / RAND_MAX) + 0.25);
+			particleSystem[i].dy = (((float)rand() / RAND_MAX) + 0.2);
 		}
 
 		particleSystem[i].position.x -= 0.35f * FRAME_TIME_SEC;
