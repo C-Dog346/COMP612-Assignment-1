@@ -186,9 +186,9 @@ void display(void)
 		}
 
 
-
+	
 	}
-	}
+}
 	
 
 
@@ -278,10 +278,10 @@ void init(void)
 	// init the particles
 	for (int i = 0; i < MAX_PARTICLES; i++)
 	{
-		particleSystem[i].position.x = ((float)rand() / RAND_MAX * 2.0f) - 0.5f;
+		particleSystem[i].position.x = ((float)rand() / RAND_MAX * 3.5f) - 0.5f;
 		particleSystem[i].position.y = ((float)rand() / RAND_MAX) * 2.0f + 1.5f;
 		particleSystem[i].active = 1;
-		particleSystem[i].dy = 1 * FRAME_TIME_SEC * (((float)rand() / RAND_MAX)+1);
+		particleSystem[i].dy = 1 * FRAME_TIME_SEC * (((float)rand() / RAND_MAX)+0.25);
 		particleSystem[i].size = ((float)rand() / RAND_MAX) * 9.0f + 1.0f;
 	}
 
@@ -346,10 +346,9 @@ void think(void)
 	for (int i = 0; i < MAX_PARTICLES; i++)
 	{
 		if (particleSystem[i].position.y <= -1) {
+			particleSystem[i].position.x = ((float)rand() / RAND_MAX * 3.5f) - 0.5f;
 			particleSystem[i].position.y = ((float)rand() / RAND_MAX) + 1.5f;
-			particleSystem[i].position.x = ((float)rand() / RAND_MAX * 2.0f) - 0.6f;
-			particleSystem[i].dy = 1 * FRAME_TIME_SEC * (((float)rand() / RAND_MAX) + 1);
-			particleSystem[i].dy = 1 * FRAME_TIME_SEC * (((float)rand() / RAND_MAX) + 1);
+			particleSystem[i].dy = 1 * FRAME_TIME_SEC * (((float)rand() / RAND_MAX) + 0.25);
 		}
 
 		particleSystem[i].position.x -= 0.35f * FRAME_TIME_SEC;
