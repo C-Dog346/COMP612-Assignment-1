@@ -11,6 +11,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <time.h>
+#include <stdbool.h>
 
 
  /******************************************************************************
@@ -41,6 +42,7 @@ unsigned int frameStartTime = 0;
  // characters typed by the user to lowercase, so the SHIFT key is ignored.
 
 #define KEY_EXIT			27 // Escape key.
+#define KEY_TOGGLE_SNOW		115 // s key.
 
 /******************************************************************************
  * GLUT Callback Prototypes
@@ -80,6 +82,8 @@ typedef struct {
 Particle_t particleSystem[MAX_PARTICLES];
 
 float vertices[10][2];
+
+bool snow;
 
  /******************************************************************************
   * Entry Point (don't put anything except the main function here)
@@ -232,6 +236,10 @@ void keyPressed(unsigned char key, int x, int y)
 	case KEY_EXIT:
 		exit(0);
 		break;
+	
+	case KEY_TOGGLE_SNOW:
+		snow = !snow;
+		break;
 	}
 }
 
@@ -275,7 +283,9 @@ void init(void)
 {
 	srand(time(NULL));
 
-	// init the particles
+	snow = true;
+
+	// init the snow
 	for (int i = 0; i < MAX_PARTICLES; i++)
 	{
 		particleSystem[i].position.x = ((float)rand() / RAND_MAX * 2.0f) - 0.5f;
@@ -285,7 +295,7 @@ void init(void)
 		particleSystem[i].size = ((float)rand() / RAND_MAX) * 9.0f + 1.0f;
 	}
 
-	// init the 
+	// init the landscape
 	for (int i = 0; i < 10; i++)
 	{
 		vertices[i][0] = (float)rand() / RAND_MAX * 0.3f + 0.2f;
@@ -343,20 +353,30 @@ void think(void)
 		brightness of lights, etc.
 	*/
 
+	// update snow
 	for (int i = 0; i < MAX_PARTICLES; i++)
 	{
 		if (particleSystem[i].position.y <= -1) {
-			particleSystem[i].position.y = ((float)rand() / RAND_MAX) + 1.5f;
-			particleSystem[i].position.x = ((float)rand() / RAND_MAX * 2.0f) - 0.6f;
-			particleSystem[i].dy = 1 * FRAME_TIME_SEC * (((float)rand() / RAND_MAX) + 1);
-			particleSystem[i].dy = 1 * FRAME_TIME_SEC * (((float)rand() / RAND_MAX) + 1);
+			if (snow) {
+				particleSystem[i].position.y = ((float)rand() / RAND_MAX) + 1.5f;
+				particleSystem[i].position.x = ((float)rand() / RAND_MAX * 2.0f) - 0.6f;
+				particleSystem[i].dy = 1 * FRAME_TIME_SEC * (((float)rand() / RAND_MAX) + 1);
+				particleSystem[i].dy = 1 * FRAME_TIME_SEC * (((float)rand() / RAND_MAX) + 1);
+			}	
+			else {
+				particleSystem[i].position.y = ((float)rand() / RAND_MAX) + 1.5f;
+				particleSystem[i].position.x = ((float)rand() / RAND_MAX * 2.0f) - 0.6f;
+				particleSystem[i].active = 0;
+			}
 		}
+		if (snow && !particleSystem[i].active)
+			particleSystem[i].active = 1;
 
-		particleSystem[i].position.x -= 0.35f * FRAME_TIME_SEC;
-		particleSystem[i].position.y -= particleSystem[i].dy;
+		if (particleSystem[i].active) {
+			particleSystem[i].position.x -= 0.35f * FRAME_TIME_SEC;
+			particleSystem[i].position.y -= particleSystem[i].dy;
+		}
 	}
-	
-
 }
 
 /******************************************************************************/
