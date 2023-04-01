@@ -283,7 +283,7 @@ void init(void)
 {
 	srand(time(NULL));
 
-	snow = true;
+	snow = false;
 
 	// init the snow
 	for (int i = 0; i < MAX_PARTICLES; i++)
@@ -378,6 +378,7 @@ void think(void)
 
 		particleSystem[i].position.x -= 0.35f * FRAME_TIME_SEC;
 		particleSystem[i].position.y -= particleSystem[i].dy;
+
 		}
 }
 
