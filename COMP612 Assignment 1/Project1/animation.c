@@ -93,7 +93,7 @@ void main(int argc, char** argv)
 {
 	// Initialize the OpenGL window.
 	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	glutInitWindowSize(900, 900);
 	glutCreateWindow("Animation");
 
@@ -190,17 +190,19 @@ void display(void)
 		}
 
 
-
+	
 	}
-	}
+}
 	
 
 
 	// Snow
-	glColor3f(0.753f, 0.753f, 0.753f);
+	
+	glEnable(GL_BLEND);
 
 	for (int i = 0; i < MAX_PARTICLES; i++)
-	{
+	{	
+		glColor4f(0.753f, 0.753f, 0.753f, particleSystem[i].dy - 0.2f);
 		glPointSize(particleSystem[i].size);
 
 		glBegin(GL_POINTS);
@@ -209,9 +211,9 @@ void display(void)
 		glEnd();
 	}
 	
+	glDisable(GL_BLEND);
 
 	glutSwapBuffers();
-
 }
 
 /*
@@ -281,6 +283,7 @@ void idle(void)
  */
 void init(void)
 {
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	srand(time(NULL));
 
 	snow = false;
@@ -289,7 +292,9 @@ void init(void)
 	for (int i = 0; i < MAX_PARTICLES; i++)
 	{
 		particleSystem[i].position.x = ((float)rand() / RAND_MAX * 3.5f) - 0.5f;
+
 		particleSystem[i].position.y = ((float)rand() / RAND_MAX) + 2.5f;
+    
 		particleSystem[i].active = 1;
 		particleSystem[i].dy = (((float)rand() / RAND_MAX) + 0.2);
 		particleSystem[i].size = ((float)rand() / RAND_MAX) * 9.0f + 1.0f;
@@ -378,7 +383,6 @@ void think(void)
 
 		particleSystem[i].position.x -= 0.35f * FRAME_TIME_SEC;
 		particleSystem[i].position.y -= particleSystem[i].dy * FRAME_TIME_SEC;
-
 		}
 }
 
