@@ -11,6 +11,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <time.h>
+#include <stdbool.h>
 
 
  /******************************************************************************
@@ -41,6 +42,7 @@ unsigned int frameStartTime = 0;
  // characters typed by the user to lowercase, so the SHIFT key is ignored.
 
 #define KEY_EXIT			27 // Escape key.
+#define KEY_TOGGLE_SNOW		115 // s key.
 
 /******************************************************************************
  * GLUT Callback Prototypes
@@ -80,6 +82,8 @@ typedef struct {
 Particle_t particleSystem[MAX_PARTICLES];
 
 float vertices[10][2];
+
+bool snow;
 
  /******************************************************************************
   * Entry Point (don't put anything except the main function here)
@@ -234,6 +238,10 @@ void keyPressed(unsigned char key, int x, int y)
 	case KEY_EXIT:
 		exit(0);
 		break;
+	
+	case KEY_TOGGLE_SNOW:
+		snow = !snow;
+		break;
 	}
 }
 
@@ -278,17 +286,21 @@ void init(void)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	srand(time(NULL));
 
-	// init the particles
+	snow = false;
+
+	// init the snow
 	for (int i = 0; i < MAX_PARTICLES; i++)
 	{
 		particleSystem[i].position.x = ((float)rand() / RAND_MAX * 3.5f) - 0.5f;
-		particleSystem[i].position.y = ((float)rand() / RAND_MAX) * 2.0f + 1.5f;
+
+		particleSystem[i].position.y = ((float)rand() / RAND_MAX) + 2.5f;
+    
 		particleSystem[i].active = 1;
 		particleSystem[i].dy = (((float)rand() / RAND_MAX) + 0.2);
 		particleSystem[i].size = ((float)rand() / RAND_MAX) * 9.0f + 1.0f;
 	}
 
-	// init the 
+	// init the landscape
 	for (int i = 0; i < 10; i++)
 	{
 		vertices[i][0] = (float)rand() / RAND_MAX * 0.3f + 0.2f;
@@ -346,19 +358,32 @@ void think(void)
 		brightness of lights, etc.
 	*/
 
+	// turn snow off
+	if (!snow) {
+		for (int i = 0; i < MAX_PARTICLES; i++)
+		{
+			if (particleSystem[i].position.y <= -1)
+			{
+				particleSystem[i].position.x = ((float)rand() / RAND_MAX * 3.5f) - 0.5f;
+				particleSystem[i].position.y = ((float)rand() / RAND_MAX) + 2.5f;
+				particleSystem[i].active = 0;
+			}
+		}
+	}
+
+	// update snow
 	for (int i = 0; i < MAX_PARTICLES; i++)
 	{
-		if (particleSystem[i].position.y <= -1) {
+		if (particleSystem[i].position.y <= -1 && particleSystem[i].active == 1)
+		{
 			particleSystem[i].position.x = ((float)rand() / RAND_MAX * 3.5f) - 0.5f;
-			particleSystem[i].position.y = ((float)rand() / RAND_MAX) + 1.5f;
+			particleSystem[i].position.y = ((float)rand() / RAND_MAX) + 2.5f;
 			particleSystem[i].dy = (((float)rand() / RAND_MAX) + 0.2);
 		}
 
 		particleSystem[i].position.x -= 0.35f * FRAME_TIME_SEC;
 		particleSystem[i].position.y -= particleSystem[i].dy * FRAME_TIME_SEC;
-	}
-	
-
+		}
 }
 
 /******************************************************************************/
