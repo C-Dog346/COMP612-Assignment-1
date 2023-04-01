@@ -353,30 +353,32 @@ void think(void)
 		brightness of lights, etc.
 	*/
 
-	// update snow
-	for (int i = 0; i < MAX_PARTICLES; i++)
-	{
-		if (particleSystem[i].position.y <= -1) {
-			if (snow) {
-				particleSystem[i].position.y = ((float)rand() / RAND_MAX) + 1.5f;
-				particleSystem[i].position.x = ((float)rand() / RAND_MAX * 2.0f) - 0.6f;
-				particleSystem[i].dy = 1 * FRAME_TIME_SEC * (((float)rand() / RAND_MAX) + 1);
-				particleSystem[i].dy = 1 * FRAME_TIME_SEC * (((float)rand() / RAND_MAX) + 1);
-			}	
-			else {
+	// turn snow off
+	if (!snow) {
+		for (int i = 0; i < MAX_PARTICLES; i++)
+		{
+			if (particleSystem[i].position.y <= -1)
+			{
 				particleSystem[i].position.y = ((float)rand() / RAND_MAX) + 1.5f;
 				particleSystem[i].position.x = ((float)rand() / RAND_MAX * 2.0f) - 0.6f;
 				particleSystem[i].active = 0;
 			}
 		}
-		if (snow && !particleSystem[i].active)
-			particleSystem[i].active = 1;
-
-		if (particleSystem[i].active) {
-			particleSystem[i].position.x -= 0.35f * FRAME_TIME_SEC;
-			particleSystem[i].position.y -= particleSystem[i].dy;
-		}
 	}
+	// update snow
+	for (int i = 0; i < MAX_PARTICLES; i++)
+	{
+		if (particleSystem[i].position.y <= -1 && particleSystem[i].active == 1)
+		{
+			particleSystem[i].position.y = ((float)rand() / RAND_MAX) + 1.5f;
+			particleSystem[i].position.x = ((float)rand() / RAND_MAX * 2.0f) - 0.6f;
+			particleSystem[i].dy = 1 * FRAME_TIME_SEC * (((float)rand() / RAND_MAX) + 1);
+			particleSystem[i].dy = 1 * FRAME_TIME_SEC * (((float)rand() / RAND_MAX) + 1);
+		}
+
+		particleSystem[i].position.x -= 0.35f * FRAME_TIME_SEC;
+		particleSystem[i].position.y -= particleSystem[i].dy;
+		}
 }
 
 /******************************************************************************/
