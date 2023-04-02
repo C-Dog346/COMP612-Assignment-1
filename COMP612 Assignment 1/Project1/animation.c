@@ -41,8 +41,9 @@ unsigned int frameStartTime = 0;
  // Note: USE ONLY LOWERCASE CHARACTERS HERE. The keyboard handler provided converts all
  // characters typed by the user to lowercase, so the SHIFT key is ignored.
 
-#define KEY_EXIT			27 // Escape key.
-#define KEY_TOGGLE_SNOW		115 // s key.
+#define KEY_EXIT				27  // Escape key.
+#define KEY_TOGGLE_SNOW			115 // s key.
+#define KEY_TOGGLE_DIAGNOSTICS	100 // d key.
 
 /******************************************************************************
  * GLUT Callback Prototypes
@@ -85,6 +86,7 @@ Particle_t particleSystem[MAX_PARTICLES];
 float vertices[10][2];
 
 bool snow;
+bool diagnostics;
 
 int particleCount;
 
@@ -280,6 +282,10 @@ void keyPressed(unsigned char key, int x, int y)
 	
 	case KEY_TOGGLE_SNOW:
 		snow = !snow;
+		break;
+
+	case KEY_TOGGLE_DIAGNOSTICS:
+		diagnostics = !diagnostics;
 		break;
 	}
 }
