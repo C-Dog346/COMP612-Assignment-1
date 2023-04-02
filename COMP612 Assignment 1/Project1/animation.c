@@ -44,6 +44,7 @@ unsigned int frameStartTime = 0;
 #define KEY_EXIT				27  // Escape key.
 #define KEY_TOGGLE_SNOW			115 // s key.
 #define KEY_TOGGLE_DIAGNOSTICS	100 // d key.
+#define KEY_CYCLE_OUTFIT		111	// o key.
 
 /******************************************************************************
  * GLUT Callback Prototypes
@@ -53,7 +54,7 @@ void display(void);
 void reshape(int width, int h);
 void keyPressed(unsigned char key, int x, int y);
 void idle(void);
-void drawCircle(float x, float y, float radius, float color[]);
+
 
 /******************************************************************************
  * Animation-Specific Function Prototypes (add your own here)
@@ -62,6 +63,10 @@ void drawCircle(float x, float y, float radius, float color[]);
 void main(int argc, char** argv);
 void init(void);
 void think(void);
+void drawCircle(float x, float y, float radius, float color[]);
+void drawOutfit(int outfit);
+void drawSemiCircle(float x, float y, float radius, float color[], int tilt);
+void drawFace(void);
 
 /******************************************************************************
  * Animation-Specific Setup (Add your own definitions, constants, and globals here)
@@ -84,15 +89,17 @@ typedef struct {
 Particle_t particleSystem[MAX_PARTICLES];
 
 float vertices[10][2];
+int particleCount;
 
 bool snow;
 bool diagnostics;
+int outfit;
 
-int particleCount;
 
- /******************************************************************************
-  * Entry Point (don't put anything except the main function here)
-  ******************************************************************************/
+
+/******************************************************************************
+ * Entry Point (don't put anything except the main function here)
+ ******************************************************************************/
 
 void main(int argc, char** argv)
 {
@@ -155,12 +162,12 @@ void display(void)
 	glColor3f(0.678f, 0.847f, 0.902f);
 	glVertex2f(1.0f, 1.0f);
 	glVertex2f(-1.0f, 1.0f);
-	
+
 	glEnd();
 
 	// Terrain
 	float totalX = 0;
-	
+
 	while (totalX < 2.0f) {
 		for (int i = 1; i < 11; i++)
 		{
@@ -172,7 +179,7 @@ void display(void)
 				glVertex2f(-1.0f + vertices[i][0], -1.0f);
 				glColor3f(0.98f, 0.98f, 0.98f);
 				glVertex2f(-1.0f + vertices[i][0], vertices[i][1]);
-				glVertex2f(-1.0f, vertices[i-1][1]);
+				glVertex2f(-1.0f, vertices[i - 1][1]);
 
 				glEnd();
 
@@ -187,7 +194,7 @@ void display(void)
 				glVertex2f(-1.0f + vertices[i][0] + totalX, -1.0f);
 				glColor3f(0.98f, 0.98f, 0.98f);
 				glVertex2f(-1.0f + vertices[i][0] + totalX, vertices[i][1]);
-				glVertex2f(-1.0f + totalX, vertices[i-1][1]);
+				glVertex2f(-1.0f + totalX, vertices[i - 1][1]);
 
 				glEnd();
 
@@ -197,31 +204,21 @@ void display(void)
 	}
 
 	// Snowman
-	float body[4] = { 0.95f, 0.93f, 0.93f, 1.0f };
-	float eyes[4] = { 0.0f, 0.0f, 0.0f, 1.0f};
-	float nose[4] = { 1.0f, 0.647f, 0.0f, 1.0f };
 	// Bottom circle
+	float body[4] = { 0.95f, 0.93f, 0.93f, 1.0f };
 	drawCircle(0.3f, -0.5f, 0.15f, body);
-	// Top circle
-	drawCircle(0.3f, -0.35f, 0.1f, body);
-	// Left eye
-	drawCircle(0.275f, -0.30f, 0.009f, eyes);
-	// Right eye
-	drawCircle(0.325f, -0.30f, 0.009f, eyes);
-	// Nose
-	glColor4f(1.0f, 0.647f, 0.0f, 1.0f);
-	glBegin(GL_TRIANGLES);
-	glVertex2f(0.3f, -0.335f);
-	glVertex2f(0.4f, -0.325f);
-	glVertex2f(0.3f, -0.315f);
-	glEnd();
+	// Face
+	drawFace();
+
+	// Outfit
+	drawOutfit(outfit);
 
 
 	// Snow
 	glEnable(GL_BLEND);
 
 	for (int i = 0; i < MAX_PARTICLES; i++)
-	{	
+	{
 		glColor4f(0.753f, 0.753f, 0.753f, particleSystem[i].dy - 0.2f);
 		glPointSize(particleSystem[i].size);
 
@@ -230,7 +227,7 @@ void display(void)
 
 		glEnd();
 	}
-	
+
 	glDisable(GL_BLEND);
 
 	// Diagnostics
@@ -281,13 +278,20 @@ void keyPressed(unsigned char key, int x, int y)
 	case KEY_EXIT:
 		exit(0);
 		break;
-	
+
 	case KEY_TOGGLE_SNOW:
 		snow = !snow;
 		break;
 
 	case KEY_TOGGLE_DIAGNOSTICS:
 		diagnostics = !diagnostics;
+		break;
+
+	case KEY_CYCLE_OUTFIT:
+		if (outfit < 3)
+			outfit++;
+		else
+			outfit = 0;
 		break;
 	}
 }
@@ -313,7 +317,7 @@ void idle(void)
 	}
 
 	// Begin processing the next frame.
-	
+
 	frameStartTime = glutGet(GLUT_ELAPSED_TIME); // Record when we started work on the new frame.
 
 	think(); // Update our simulated world before the next call to display().
@@ -329,7 +333,7 @@ void drawCircle(float x, float y, float radius, float color[])
 {
 	glBegin(GL_TRIANGLE_FAN);
 	glColor4f(color[0], color[1], color[2], color[3]);
-	glVertex2f(x, y);
+
 
 	for (int i = 0; i <= 360; i++)
 	{
@@ -342,16 +346,229 @@ void drawCircle(float x, float y, float radius, float color[])
 	glEnd();
 }
 
+void drawSemiCircle(float x, float y, float radius, float color[], int tilt)
+{
+	glBegin(GL_TRIANGLE_FAN);
+	glColor4f(color[0], color[1], color[2], color[3]);
+	glVertex2f(x, y);
 
- /*
-	 Initialise OpenGL and set up our scene before we begin the render loop.
- */
+	for (int i = 0 + tilt; i <= 180 + tilt; i++)
+	{
+		float angle = (float)(i * 3.1415 / 180.0);
+		float localX = cos(angle) * radius;
+		float localY = sin(angle) * radius;
+		glVertex2f(localX + x, localY + y);
+	}
+
+	glEnd();
+}
+
+void drawFace()
+{
+	// Colours
+	float body[4] = { 0.95f, 0.93f, 0.93f, 1.0f };
+	float eyes[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	float nose[4] = { 1.0f, 0.647f, 0.0f, 1.0f };
+
+	// Top circle
+	drawCircle(0.3f, -0.35f, 0.1f, body);
+	// Left eye
+	drawCircle(0.275f, -0.30f, 0.009f, eyes);
+	// Right eye
+	drawCircle(0.325f, -0.30f, 0.009f, eyes);
+	// Nose
+	glColor4f(1.0f, 0.647f, 0.0f, 1.0f);
+	glBegin(GL_TRIANGLES);
+	glVertex2f(0.3f, -0.335f);
+	glVertex2f(0.4f, -0.325f);
+	glVertex2f(0.3f, -0.315f);
+	glEnd();
+}
+
+void drawOutfit(int outfit)
+{
+	if (outfit == 0)
+		;
+	// Fancy outfit
+	else if (outfit == 1)
+	{
+		// Top Hat Brim
+		glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
+		glBegin(GL_POLYGON);
+
+		glVertex2f(0.2f, -0.27f);
+		glVertex2f(0.4f, -0.27f);
+		glVertex2f(0.4f, -0.245f);
+		glVertex2f(0.2f, -0.245f);
+
+		glEnd();
+
+		// Top Hat Crown
+		glBegin(GL_POLYGON);
+
+		glVertex2f(0.23f, -0.245f);
+		glVertex2f(0.37f, -0.245f);
+		glVertex2f(0.37f, -0.15f);
+		glVertex2f(0.23f, -0.15f);
+
+		glEnd();
+
+		// Top Hat Stripe
+		glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+		glBegin(GL_POLYGON);
+
+		glVertex2f(0.23f, -0.245f);
+		glVertex2f(0.37f, -0.245f);
+		glVertex2f(0.37f, -0.22f);
+		glVertex2f(0.23f, -0.22f);
+
+		glEnd();
+
+		// Top Tie Triangle
+		glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
+		glBegin(GL_TRIANGLES);
+
+		glVertex2f(0.3f, -0.45f);
+		glVertex2f(0.32f, -0.4f);
+		glVertex2f(0.28f, -0.4f);
+
+		glEnd();
+
+		// Bottom Triangle Strip/Flag of Tie
+		glBegin(GL_TRIANGLE_STRIP);
+
+		glVertex2f(0.3f, -0.44f);
+		glVertex2f(0.28f, -0.55f);
+		glVertex2f(0.32f, -0.55f);
+		glVertex2f(0.3f, -0.57f);
+
+		glEnd();
+
+		// Left Shoe Foot
+		glBegin(GL_POLYGON);
+
+		glVertex2f(0.2f, -0.66f);
+		glVertex2f(0.275f, -0.66f);
+		glVertex2f(0.275f, -0.635f);
+		glVertex2f(0.2f, -0.635f);
+
+		glEnd();
+
+		// Left Shoe Toes
+		glBegin(GL_TRIANGLES);
+
+		glVertex2f(0.15f, -0.66f);
+		glVertex2f(0.2f, -0.66f);
+		glVertex2f(0.2f, -0.635f);
+
+		glEnd();
+
+		// Right Shoe Foot
+		glBegin(GL_POLYGON);
+
+		glVertex2f(0.325f, -0.66f);
+		glVertex2f(0.4f, -0.66f);
+		glVertex2f(0.4f, -0.635f);
+		glVertex2f(0.325f, -0.635f);
+
+		glEnd();
+
+		// Right Shoe Toes
+		glBegin(GL_TRIANGLES);
+
+		glVertex2f(0.4f, -0.66f);
+		glVertex2f(0.45f, -0.66f);
+		glVertex2f(0.4f, -0.635f);
+
+		glEnd();
+	}
+	// Warm outfit
+	else if (outfit == 2)
+	{
+		float beanie[4] = { 0.0f, 0.0f, 1.0f, 1.0f };
+		float earmuff[4] = { 0.97f, 0.78f, 0.86f, 1.0f };
+		drawSemiCircle(0.21f, -0.335f, 0.03f, earmuff, 90, 5);
+		drawSemiCircle(0.39f, -0.335f, 0.03f, earmuff, 270, 5);
+		drawFace();
+		drawSemiCircle(0.3f, -0.275f, 0.065f, beanie, 0, 0);
+
+		// Scarf main
+		glColor4f(0.75f, 0.0f, 0.0f, 1.0f);
+
+		glBegin(GL_POLYGON);
+
+		glVertex2f(0.2f, -0.4);
+		glVertex2f(0.4f, -0.4);
+		glVertex2f(0.39f, -0.375);
+		glVertex2f(0.2f, -0.375f);
+
+		glEnd();
+
+		// Scarf tail
+		glBegin(GL_POLYGON);
+
+		glVertex2f(0.23f, -0.49);
+		glVertex2f(0.25f, -0.4);
+		glVertex2f(0.23f, -0.375);
+		glVertex2f(0.21f, -0.48f);
+
+		glEnd();
+	}
+	// Christmas Tree Outfit
+	else if (outfit == 3)
+	{
+		glColor4f(0.0f, 0.65f, 0.0f, 1.0f);
+
+		// First Triangle
+		glBegin(GL_TRIANGLES);
+
+		glVertex2f(0.175f, -0.22f);
+		glVertex2f(0.425f, -0.22f);
+		glVertex2f(0.3f, 0.0f);
+
+		glEnd();
+
+		glBegin(GL_TRIANGLES);
+
+		glVertex2f(0.05f, -0.45f);
+		glVertex2f(0.55f, -0.45f);
+		glVertex2f(0.3f, -0.18f);
+
+		glEnd();
+
+		glBegin(GL_TRIANGLES);
+
+		glVertex2f(0.0f, -0.6f);
+		glVertex2f(0.6f, -0.6f);
+		glVertex2f(0.3f, -0.3f);
+
+		glEnd();
+
+		float goldBauble[4] = { 1.0f, 0.843f, 0.0f, 1.0f };
+		float redBauble[4] = { 1.0f, 0.0f, 0.0f, 1.0f };
+		drawCircle(0.3f, -0.05f, 0.02f, goldBauble);
+		drawCircle(0.18f, -0.22f, 0.01f, redBauble);
+		drawCircle(0.42f, -0.22f, 0.01f, redBauble);
+		drawCircle(0.055f, -0.45f, 0.01f, redBauble);
+		drawCircle(0.545f, -0.45f, 0.01f, redBauble);
+		drawCircle(0.005f, -0.6f, 0.01f, redBauble);
+		drawCircle(0.595f, -0.6f, 0.01f, redBauble);
+
+		drawFace();
+	}
+}
+
+
+/*
+	Initialise OpenGL and set up our scene before we begin the render loop.
+*/
 void init(void)
 {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	srand(time(NULL));
 	snow = true;
 	diagnostics = true;
+	outfit = 0;
 
 	// init the snow
 	for (int i = 0; i < MAX_PARTICLES; i++)
@@ -359,7 +576,7 @@ void init(void)
 		particleSystem[i].position.x = ((float)rand() / RAND_MAX * 3.5f) - 0.5f;
 
 		particleSystem[i].position.y = ((float)rand() / RAND_MAX) * 2 + 2.0f;
-		
+
 		particleSystem[i].dy = (((float)rand() / RAND_MAX) + 0.2);
 		particleSystem[i].size = ((float)rand() / RAND_MAX) * 9.0f + 1.0f;
 		particleSystem[i].active = 1;
@@ -371,7 +588,7 @@ void init(void)
 	{
 		vertices[i][0] = (float)rand() / RAND_MAX * 0.3f + 0.2f;
 		vertices[i][1] = (float)rand() / RAND_MAX * 0.4f - 0.3f;
-	}	
+	}
 }
 
 /*
@@ -429,7 +646,7 @@ void think(void)
 	int activeCount = 1000;
 	for (int i = 0; i < MAX_PARTICLES; i++)
 	{
-		
+
 		// Deactivate particles
 		if (!snow && particleSystem[i].position.y < -1.0
 			|| !snow && particleSystem[i].position.y > 1.0
