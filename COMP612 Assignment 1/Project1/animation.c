@@ -44,6 +44,7 @@ unsigned int frameStartTime = 0;
 #define KEY_EXIT				27  // Escape key.
 #define KEY_TOGGLE_SNOW			115 // s key.
 #define KEY_TOGGLE_DIAGNOSTICS	100 // d key.
+#define KEY_CYCLE_OUTFIT		111	// o key.
 
 /******************************************************************************
  * GLUT Callback Prototypes
@@ -53,7 +54,7 @@ void display(void);
 void reshape(int width, int h);
 void keyPressed(unsigned char key, int x, int y);
 void idle(void);
-void drawCircle(float x, float y, float radius, float color[]);
+
 
 /******************************************************************************
  * Animation-Specific Function Prototypes (add your own here)
@@ -62,6 +63,8 @@ void drawCircle(float x, float y, float radius, float color[]);
 void main(int argc, char** argv);
 void init(void);
 void think(void);
+void drawCircle(float x, float y, float radius, float color[]);
+void drawOutfit(int outfit);
 
 /******************************************************************************
  * Animation-Specific Setup (Add your own definitions, constants, and globals here)
@@ -84,11 +87,13 @@ typedef struct {
 Particle_t particleSystem[MAX_PARTICLES];
 
 float vertices[10][2];
+int particleCount;
 
 bool snow;
 bool diagnostics;
+int outfit;
 
-int particleCount;
+
 
  /******************************************************************************
   * Entry Point (don't put anything except the main function here)
@@ -216,6 +221,9 @@ void display(void)
 	glVertex2f(0.3f, -0.315f);
 	glEnd();
 
+	// Outfit
+	drawOutfit(outfit);
+
 
 	// Snow
 	glEnable(GL_BLEND);
@@ -289,6 +297,13 @@ void keyPressed(unsigned char key, int x, int y)
 	case KEY_TOGGLE_DIAGNOSTICS:
 		diagnostics = !diagnostics;
 		break;
+
+	case KEY_CYCLE_OUTFIT:
+		if (outfit < 3)
+			outfit++;
+		else
+			outfit = 0;
+		break;
 	}
 }
 
@@ -342,6 +357,104 @@ void drawCircle(float x, float y, float radius, float color[])
 	glEnd();
 }
 
+void drawOutfit(int outfit) 
+{
+	if (outfit == 0)
+		;
+	else if (outfit == 1)
+	{
+		// Top Hat Brim
+		glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
+		glBegin(GL_POLYGON);
+
+		glVertex2f(0.2f, -0.27f);
+		glVertex2f(0.4f, -0.27f);
+		glVertex2f(0.4f, -0.245f);
+		glVertex2f(0.2f, -0.245f);
+
+		glEnd();
+
+		// Top Hat Crown
+		glBegin(GL_POLYGON);
+
+		glVertex2f(0.23f, -0.245f);
+		glVertex2f(0.37f, -0.245f);
+		glVertex2f(0.37f, -0.15f);
+		glVertex2f(0.23f, -0.15f);
+
+		glEnd();
+
+		// Top Hat Stripe
+		glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+		glBegin(GL_POLYGON);
+
+		glVertex2f(0.23f, -0.245f);
+		glVertex2f(0.37f, -0.245f);
+		glVertex2f(0.37f, -0.22f);
+		glVertex2f(0.23f, -0.22f);
+
+		glEnd();
+
+		// Top Tie Triangle
+		glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
+		glBegin(GL_TRIANGLES);
+
+		glVertex2f(0.3f, -0.45f);
+		glVertex2f(0.32f, -0.4f);
+		glVertex2f(0.28f, -0.4f);
+
+		glEnd();
+
+		// Bottom Triangle Strip/Flag of Tie
+		glBegin(GL_TRIANGLE_STRIP);
+
+		glVertex2f(0.3f, -0.44f);
+		glVertex2f(0.28f, -0.55f);
+		glVertex2f(0.32f, -0.55f);
+		glVertex2f(0.3f, -0.57f);
+
+		glEnd();
+
+		// Left Shoe Foot
+		glBegin(GL_POLYGON);
+
+		glVertex2f(0.2f, -0.66f);
+		glVertex2f(0.275f, -0.66f);
+		glVertex2f(0.275f, -0.635f);
+		glVertex2f(0.2f, -0.635f);
+
+		glEnd();
+
+		// Left Shoe Toes
+		glBegin(GL_TRIANGLES);
+
+		glVertex2f(0.15f, -0.66f);
+		glVertex2f(0.2f, -0.66f);
+		glVertex2f(0.2f, -0.635f);
+
+		glEnd();
+
+		// Right Shoe Foot
+		glBegin(GL_POLYGON);
+
+		glVertex2f(0.325f, -0.66f);
+		glVertex2f(0.4f, -0.66f);
+		glVertex2f(0.4f, -0.635f);
+		glVertex2f(0.325f, -0.635f);
+
+		glEnd();
+
+		// Right Shoe Toes
+		glBegin(GL_TRIANGLES);
+
+		glVertex2f(0.4f, -0.66f);
+		glVertex2f(0.45f, -0.66f);
+		glVertex2f(0.4f, -0.635f);
+
+		glEnd();
+	}
+}
+
 
  /*
 	 Initialise OpenGL and set up our scene before we begin the render loop.
@@ -352,6 +465,7 @@ void init(void)
 	srand(time(NULL));
 	snow = true;
 	diagnostics = true;
+	outfit = 0;
 
 	// init the snow
 	for (int i = 0; i < MAX_PARTICLES; i++)
