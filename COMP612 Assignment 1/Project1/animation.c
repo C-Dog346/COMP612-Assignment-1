@@ -52,6 +52,7 @@ void display(void);
 void reshape(int width, int h);
 void keyPressed(unsigned char key, int x, int y);
 void idle(void);
+void drawCircle(float x, float y, float radius, float color[]);
 
 /******************************************************************************
  * Animation-Specific Function Prototypes (add your own here)
@@ -73,10 +74,10 @@ typedef struct {
 } Position2d;
 
 typedef struct {
-	Position2d position; //x y location of particle
+	Position2d position; // x, y coordiantes of particle
 	float size; // GL point size
-	float dy; //velocity
-	int active; //is inactive
+	float dy; // velocity
+	int active; // is active/inactive
 } Particle_t;
 
 Particle_t particleSystem[MAX_PARTICLES];
@@ -160,46 +161,61 @@ void display(void)
 	
 	while (totalX < 2.0f) {
 		for (int i = 1; i < 11; i++)
-	{
-		if (i == 0) {
-			glBegin(GL_POLYGON);
+		{
+			if (i == 0) {
+				glBegin(GL_POLYGON);
 
-			glColor3f(0.2f, 0.2f, 0.2f);
-			glVertex2f(-1.0f, -1.0f);
-			glVertex2f(-1.0f + vertices[i][0], -1.0f);
-			glColor3f(0.98f, 0.98f, 0.98f);
-			glVertex2f(-1.0f + vertices[i][0], vertices[i][1]);
-			glVertex2f(-1.0f, vertices[i-1][1]);
+				glColor3f(0.35f, 0.35f, 0.35f);
+				glVertex2f(-1.0f, -1.0f);
+				glVertex2f(-1.0f + vertices[i][0], -1.0f);
+				glColor3f(0.98f, 0.98f, 0.98f);
+				glVertex2f(-1.0f + vertices[i][0], vertices[i][1]);
+				glVertex2f(-1.0f, vertices[i-1][1]);
 
-			glEnd();
+				glEnd();
 
-			totalX += vertices[i][0];
+				totalX += vertices[i][0];
+			}
+
+			else {
+				glBegin(GL_POLYGON);
+
+				glColor3f(0.35f, 0.35f, 0.35f);
+				glVertex2f(-1.0f + totalX, -1.0f);
+				glVertex2f(-1.0f + vertices[i][0] + totalX, -1.0f);
+				glColor3f(0.98f, 0.98f, 0.98f);
+				glVertex2f(-1.0f + vertices[i][0] + totalX, vertices[i][1]);
+				glVertex2f(-1.0f + totalX, vertices[i-1][1]);
+
+				glEnd();
+
+				totalX += vertices[i][0];
+			}
 		}
-
-		else {
-			glBegin(GL_POLYGON);
-
-			glColor3f(0.2f, 0.2f, 0.2f);
-			glVertex2f(-1.0f + totalX, -1.0f);
-			glVertex2f(-1.0f + vertices[i][0] + totalX, -1.0f);
-			glColor3f(0.98f, 0.98f, 0.98f);
-			glVertex2f(-1.0f + vertices[i][0] + totalX, vertices[i][1]);
-			glVertex2f(-1.0f + totalX, vertices[i-1][1]);
-
-			glEnd();
-
-			totalX += vertices[i][0];
-		}
-
-
-	
 	}
-}
-	
+
+	// Snowman
+	float body[4] = { 0.95f, 0.93f, 0.93f, 1.0f };
+	float eyes[4] = { 0.0f, 0.0f, 0.0f, 1.0f};
+	float nose[4] = { 1.0f, 0.647f, 0.0f, 1.0f };
+	// Bottom circle
+	drawCircle(0.3f, -0.5f, 0.15f, body);
+	// Top circle
+	drawCircle(0.3f, -0.35f, 0.1f, body);
+	// Left eye
+	drawCircle(0.275f, -0.30f, 0.009f, eyes);
+	// Right eye
+	drawCircle(0.325f, -0.30f, 0.009f, eyes);
+	// Nose
+	glColor4f(1.0f, 0.647f, 0.0f, 1.0f);
+	glBegin(GL_TRIANGLES);
+	glVertex2f(0.3f, -0.335f);
+	glVertex2f(0.4f, -0.325f);
+	glVertex2f(0.3f, -0.315f);
+	glEnd();
 
 
 	// Snow
-	
 	glEnable(GL_BLEND);
 
 	for (int i = 0; i < MAX_PARTICLES; i++)
@@ -300,6 +316,24 @@ void idle(void)
 /******************************************************************************
  * Animation-Specific Functions (Add your own functions at the end of this section)
  ******************************************************************************/
+
+void drawCircle(float x, float y, float radius, float color[])
+{
+	glBegin(GL_TRIANGLE_FAN);
+	glColor4f(color[0], color[1], color[2], color[3]);
+	glVertex2f(x, y);
+
+	for (int i = 0; i <= 360; i++)
+	{
+		float angle = (float)(i * 3.1415 / 180.0);
+		float localX = cos(angle) * radius;
+		float localY = sin(angle) * radius;
+		glVertex2f(localX + x, localY + y);
+	}
+
+	glEnd();
+}
+
 
  /*
 	 Initialise OpenGL and set up our scene before we begin the render loop.
