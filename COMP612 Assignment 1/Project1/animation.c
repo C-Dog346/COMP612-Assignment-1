@@ -413,6 +413,7 @@ void think(void)
 		particleSystem[i].position.x -= 0.35f * FRAME_TIME_SEC;
 		particleSystem[i].position.y -= particleSystem[i].dy * FRAME_TIME_SEC;
 
+		// Count number of active particles
 		if (particleSystem[i].position.y > -1.0
 			&& particleSystem[i].position.y < 1.0
 			&& particleSystem[i].position.x > -1.0
