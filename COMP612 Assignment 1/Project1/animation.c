@@ -227,7 +227,7 @@ void display(void)
 
 	glRasterPos2f(-0.95f, 0.9f);
 	char particleCountDisplay[30];
-	sprintf_s(particleCountDisplay, 30, "Number of particles: %d", 5);
+	sprintf_s(particleCountDisplay, 30, "Number of particles: %d", particleCount);
 	glutBitmapString(GLUT_BITMAP_HELVETICA_12, particleCountDisplay);
 
 	glutSwapBuffers();
@@ -311,10 +311,11 @@ void init(void)
 		particleSystem[i].position.x = ((float)rand() / RAND_MAX * 3.5f) - 0.5f;
 
 		particleSystem[i].position.y = ((float)rand() / RAND_MAX) * 2 + 2.5f;
-    
-		particleSystem[i].active = 1;
+		
 		particleSystem[i].dy = (((float)rand() / RAND_MAX) + 0.2);
 		particleSystem[i].size = ((float)rand() / RAND_MAX) * 9.0f + 1.0f;
+		particleSystem[i].active = 1;
+		particleCount++;
 	}
 
 	// init the landscape
@@ -384,6 +385,7 @@ void think(void)
 		{
 			particleSystem[i].active = 0;
 			particleSystem[i].dy = 0;
+			particleCount--;
 		}
 		if (particleSystem[i].position.y <= -1.2 && particleSystem[i].active == 1)
 		{
@@ -393,7 +395,9 @@ void think(void)
 		}
 		if (snow && particleSystem[i].dy == 0)
 		{
+			printf("Test");
 			particleSystem[i].active = 1;
+			particleCount++;
 		}
 
 		particleSystem[i].position.x -= 0.35f * FRAME_TIME_SEC;
