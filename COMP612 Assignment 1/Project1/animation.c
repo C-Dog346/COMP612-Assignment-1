@@ -222,10 +222,16 @@ void display(void)
 
 	glColor3f(1.0f, 0.0f, 0.0f);
 
+	// Quit
 	glRasterPos2f(-0.95f, 0.95f);
 	glutBitmapString(GLUT_BITMAP_HELVETICA_12, "Press [ESC] to quit");
 
-	glRasterPos2f(-0.95f, 0.9f);
+	// Snow toggle
+	glRasterPos2f(-0.95f, 0.90f);
+	glutBitmapString(GLUT_BITMAP_HELVETICA_12, "Press [s] to toggle snow");
+
+	// Active number of particles on screen
+	glRasterPos2f(-0.95f, 0.85f);
 	char particleCountDisplay[40];
 	sprintf_s(particleCountDisplay, 40, "Number of particles on screen: %d", particleCount);
 	glutBitmapString(GLUT_BITMAP_HELVETICA_12, particleCountDisplay);
@@ -413,6 +419,7 @@ void think(void)
 		particleSystem[i].position.x -= 0.35f * FRAME_TIME_SEC;
 		particleSystem[i].position.y -= particleSystem[i].dy * FRAME_TIME_SEC;
 
+		// Count number of active particles
 		if (particleSystem[i].position.y > -1.0
 			&& particleSystem[i].position.y < 1.0
 			&& particleSystem[i].position.x > -1.0
