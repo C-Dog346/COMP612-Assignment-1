@@ -85,6 +85,8 @@ float vertices[10][2];
 
 bool snow;
 
+int particleCount;
+
  /******************************************************************************
   * Entry Point (don't put anything except the main function here)
   ******************************************************************************/
@@ -212,6 +214,21 @@ void display(void)
 	}
 	
 	glDisable(GL_BLEND);
+
+	// Diagnostics
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+
+	glColor3f(1.0f, 0.0f, 0.0f);
+
+	glRasterPos2f(-0.95f, 0.95f);
+	glutBitmapString(GLUT_BITMAP_HELVETICA_12, "Press [ESC] to quit");
+
+	glRasterPos2f(-0.95f, 0.9f);
+	char particleCountDisplay[30];
+	sprintf_s(particleCountDisplay, 30, "Number of particles: %d", 5);
+	glutBitmapString(GLUT_BITMAP_HELVETICA_12, particleCountDisplay);
 
 	glutSwapBuffers();
 }
