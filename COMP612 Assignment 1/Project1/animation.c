@@ -213,16 +213,6 @@ void display(void)
 	
 	glDisable(GL_BLEND);
 
-	// Diagnostics
-
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-
-	glColor3f(1.0, 1.0, 1.0);
-
-	glRasterPos2i(0.45, 0.25);
-	glutBitmapString(GLUT_BITMAP_HELVETICA_18, "hi");
-
 	glutSwapBuffers();
 }
 
@@ -376,12 +366,17 @@ void think(void)
 		if (!snow && particleSystem[i].position.y <= -1.2)
 		{
 			particleSystem[i].active = 0;
+			particleSystem[i].dy = 0;
 		}
 		if (particleSystem[i].position.y <= -1.2 && particleSystem[i].active == 1)
 		{
 			particleSystem[i].position.x = ((float)rand() / RAND_MAX * 3.5f) - 0.5f;
 			particleSystem[i].position.y = ((float)rand() / RAND_MAX) * 2 + 2.5f;
 			particleSystem[i].dy = (((float)rand() / RAND_MAX) + 0.2);
+		}
+		if (snow && particleSystem[i].dy == 0)
+		{
+			particleSystem[i].active = 1;
 		}
 
 		particleSystem[i].position.x -= 0.35f * FRAME_TIME_SEC;
