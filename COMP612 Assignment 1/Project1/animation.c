@@ -286,14 +286,14 @@ void init(void)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	srand(time(NULL));
 
-	snow = false;
+	snow = true;
 
 	// init the snow
 	for (int i = 0; i < MAX_PARTICLES; i++)
 	{
 		particleSystem[i].position.x = ((float)rand() / RAND_MAX * 3.5f) - 0.5f;
 
-		particleSystem[i].position.y = ((float)rand() / RAND_MAX) + 2.5f;
+		particleSystem[i].position.y = ((float)rand() / RAND_MAX) * 2 + 2.5f;
     
 		particleSystem[i].active = 1;
 		particleSystem[i].dy = (((float)rand() / RAND_MAX) + 0.2);
@@ -358,27 +358,25 @@ void think(void)
 		brightness of lights, etc.
 	*/
 
-	// turn snow off
-	if (!snow) {
-		for (int i = 0; i < MAX_PARTICLES; i++)
-		{
-			if (particleSystem[i].position.y <= -1)
-			{
-				particleSystem[i].position.x = ((float)rand() / RAND_MAX * 3.5f) - 0.5f;
-				particleSystem[i].position.y = ((float)rand() / RAND_MAX) + 2.5f;
-				particleSystem[i].active = 0;
-			}
-		}
-	}
 
 	// update snow
 	for (int i = 0; i < MAX_PARTICLES; i++)
 	{
-		if (particleSystem[i].position.y <= -1 && particleSystem[i].active == 1)
+		
+		if (!snow && particleSystem[i].position.y <= -1.2)
+		{
+			particleSystem[i].active = 0;
+			particleSystem[i].dy = 0;
+		}
+		if (particleSystem[i].position.y <= -1.2 && particleSystem[i].active == 1)
 		{
 			particleSystem[i].position.x = ((float)rand() / RAND_MAX * 3.5f) - 0.5f;
-			particleSystem[i].position.y = ((float)rand() / RAND_MAX) + 2.5f;
+			particleSystem[i].position.y = ((float)rand() / RAND_MAX) * 2 + 2.5f;
 			particleSystem[i].dy = (((float)rand() / RAND_MAX) + 0.2);
+		}
+		if (snow && particleSystem[i].dy == 0)
+		{
+			particleSystem[i].active = 1;
 		}
 
 		particleSystem[i].position.x -= 0.35f * FRAME_TIME_SEC;
