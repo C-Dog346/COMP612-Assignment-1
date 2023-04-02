@@ -235,24 +235,26 @@ void display(void)
 
 	// Diagnostics
 
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
+	if (diagnostics) {
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
 
-	glColor3f(1.0f, 0.0f, 0.0f);
+		glColor3f(1.0f, 0.0f, 0.0f);
 
-	// Quit
-	glRasterPos2f(-0.95f, 0.95f);
-	glutBitmapString(GLUT_BITMAP_HELVETICA_12, "Press [ESC] to quit");
+		// Quit
+		glRasterPos2f(-0.95f, 0.95f);
+		glutBitmapString(GLUT_BITMAP_HELVETICA_12, "Press [ESC] to quit");
 
-	// Snow toggle
-	glRasterPos2f(-0.95f, 0.90f);
-	glutBitmapString(GLUT_BITMAP_HELVETICA_12, "Press [s] to toggle snow");
+		// Snow toggle
+		glRasterPos2f(-0.95f, 0.90f);
+		glutBitmapString(GLUT_BITMAP_HELVETICA_12, "Press [s] to toggle snow");
 
-	// Active number of particles on screen
-	glRasterPos2f(-0.95f, 0.85f);
-	char particleCountDisplay[40];
-	sprintf_s(particleCountDisplay, 40, "Number of particles on screen: %d", particleCount);
-	glutBitmapString(GLUT_BITMAP_HELVETICA_12, particleCountDisplay);
+		// Active number of particles on screen
+		glRasterPos2f(-0.95f, 0.85f);
+		char particleCountDisplay[40];
+		sprintf_s(particleCountDisplay, 40, "Number of particles on screen: %d", particleCount);
+		glutBitmapString(GLUT_BITMAP_HELVETICA_12, particleCountDisplay);
+	}
 
 	glutSwapBuffers();
 }
@@ -349,6 +351,7 @@ void init(void)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	srand(time(NULL));
 	snow = true;
+	diagnostics = true;
 
 	// init the snow
 	for (int i = 0; i < MAX_PARTICLES; i++)
