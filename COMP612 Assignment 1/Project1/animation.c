@@ -226,8 +226,8 @@ void display(void)
 	glutBitmapString(GLUT_BITMAP_HELVETICA_12, "Press [ESC] to quit");
 
 	glRasterPos2f(-0.95f, 0.9f);
-	char particleCountDisplay[30];
-	sprintf_s(particleCountDisplay, 30, "Number of particles: %d", particleCount);
+	char particleCountDisplay[40];
+	sprintf_s(particleCountDisplay, 40, "Number of particles on screen: %d", particleCount);
 	glutBitmapString(GLUT_BITMAP_HELVETICA_12, particleCountDisplay);
 
 	glutSwapBuffers();
@@ -302,7 +302,6 @@ void init(void)
 {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	srand(time(NULL));
-
 	snow = true;
 
 	// init the snow
@@ -310,7 +309,7 @@ void init(void)
 	{
 		particleSystem[i].position.x = ((float)rand() / RAND_MAX * 3.5f) - 0.5f;
 
-		particleSystem[i].position.y = ((float)rand() / RAND_MAX) * 2 + 2.5f;
+		particleSystem[i].position.y = ((float)rand() / RAND_MAX) * 2 + 2.0f;
 		
 		particleSystem[i].dy = (((float)rand() / RAND_MAX) + 0.2);
 		particleSystem[i].size = ((float)rand() / RAND_MAX) * 9.0f + 1.0f;
@@ -377,32 +376,52 @@ void think(void)
 	*/
 
 
-	// update snow
+	// Update snow
+	int activeCount = 1000;
 	for (int i = 0; i < MAX_PARTICLES; i++)
 	{
 		
-		if (!snow && particleSystem[i].position.y <= -1.2)
+		// Deactivate particles
+		if (!snow && particleSystem[i].position.y < -1.0
+			|| !snow && particleSystem[i].position.y > 1.0
+			|| !snow && particleSystem[i].position.x < -1.0
+			|| !snow && particleSystem[i].position.x > 1.0)
 		{
 			particleSystem[i].active = 0;
 			particleSystem[i].dy = 0;
-			particleCount--;
-		}
-		if (particleSystem[i].position.y <= -1.2 && particleSystem[i].active == 1)
-		{
 			particleSystem[i].position.x = ((float)rand() / RAND_MAX * 3.5f) - 0.5f;
-			particleSystem[i].position.y = ((float)rand() / RAND_MAX) * 2 + 2.5f;
-			particleSystem[i].dy = (((float)rand() / RAND_MAX) + 0.2);
-		}
-		if (snow && particleSystem[i].dy == 0)
-		{
-			printf("Test");
-			particleSystem[i].active = 1;
-			particleCount++;
+			particleSystem[i].position.y = ((float)rand() / RAND_MAX) * 2 + 2.0f;
 		}
 
+		// Recycle particles to the top of the screen
+		if (particleSystem[i].position.y <= -1.0 && particleSystem[i].active == 1)
+		{
+
+			particleSystem[i].position.x = ((float)rand() / RAND_MAX * 3.5f) - 0.5f;
+			particleSystem[i].position.y = ((float)rand() / RAND_MAX) * 2 + 2.0f;
+			particleSystem[i].dy = (((float)rand() / RAND_MAX) + 0.2);
+		}
+
+		// Reactivate particles
+		if (snow && particleSystem[i].dy == 0)
+		{
+			particleSystem[i].dy = (((float)rand() / RAND_MAX) + 0.2);
+			particleSystem[i].active = 1;
+		}
+
+		// Update particle position
 		particleSystem[i].position.x -= 0.35f * FRAME_TIME_SEC;
 		particleSystem[i].position.y -= particleSystem[i].dy * FRAME_TIME_SEC;
-		}
+
+		if (particleSystem[i].position.y > -1.0
+			&& particleSystem[i].position.y < 1.0
+			&& particleSystem[i].position.x > -1.0
+			&& particleSystem[i].position.x < 1.0)
+			activeCount++;
+		else
+			activeCount--;
+	}
+	particleCount = activeCount;
 }
 
 /******************************************************************************/
