@@ -65,6 +65,8 @@ void init(void);
 void think(void);
 void drawCircle(float x, float y, float radius, float color[]);
 void drawOutfit(int outfit);
+void drawSemiCircle(float x, float y, float radius, float color[], int tilt);
+void drawFace(void);
 
 /******************************************************************************
  * Animation-Specific Setup (Add your own definitions, constants, and globals here)
@@ -202,27 +204,11 @@ void display(void)
 	}
 
 	// Snowman
-	float body[4] = { 0.95f, 0.93f, 0.93f, 1.0f };
-	float eyes[4] = { 0.0f, 0.0f, 0.0f, 1.0f};
-	float nose[4] = { 1.0f, 0.647f, 0.0f, 1.0f };
-	// Bottom circle
-	drawCircle(0.3f, -0.5f, 0.15f, body);
-	// Top circle
-	drawCircle(0.3f, -0.35f, 0.1f, body);
-	// Left eye
-	drawCircle(0.275f, -0.30f, 0.009f, eyes);
-	// Right eye
-	drawCircle(0.325f, -0.30f, 0.009f, eyes);
-	// Nose
-	glColor4f(1.0f, 0.647f, 0.0f, 1.0f);
-	glBegin(GL_TRIANGLES);
-	glVertex2f(0.3f, -0.335f);
-	glVertex2f(0.4f, -0.325f);
-	glVertex2f(0.3f, -0.315f);
-	glEnd();
+	// Face
+	drawFace();
 
 	// Outfit
-	drawOutfit(outfit);
+	drawOutfit(2);
 
 
 	// Snow
@@ -344,7 +330,7 @@ void drawCircle(float x, float y, float radius, float color[])
 {
 	glBegin(GL_TRIANGLE_FAN);
 	glColor4f(color[0], color[1], color[2], color[3]);
-	glVertex2f(x, y);
+	
 
 	for (int i = 0; i <= 360; i++)
 	{
@@ -357,10 +343,52 @@ void drawCircle(float x, float y, float radius, float color[])
 	glEnd();
 }
 
+void drawSemiCircle(float x, float y, float radius, float color[], int tilt)
+{
+	glBegin(GL_TRIANGLE_FAN);
+	glColor4f(color[0], color[1], color[2], color[3]);
+	glVertex2f(x, y);
+
+	for (int i = 0 + tilt; i <= 180 + tilt; i++)
+	{
+		float angle = (float)(i * 3.1415 / 180.0);
+		float localX = cos(angle) * radius;
+		float localY = sin(angle) * radius;
+		glVertex2f(localX + x, localY + y);
+	}
+
+	glEnd();
+}
+
+void drawFace()
+{
+	// Colours
+	float body[4] = { 0.95f, 0.93f, 0.93f, 1.0f };
+	float eyes[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	float nose[4] = { 1.0f, 0.647f, 0.0f, 1.0f };
+
+	// Bottom circle
+	drawCircle(0.3f, -0.5f, 0.15f, body);
+	// Top circle
+	drawCircle(0.3f, -0.35f, 0.1f, body);
+	// Left eye
+	drawCircle(0.275f, -0.30f, 0.009f, eyes);
+	// Right eye
+	drawCircle(0.325f, -0.30f, 0.009f, eyes);
+	// Nose
+	glColor4f(1.0f, 0.647f, 0.0f, 1.0f);
+	glBegin(GL_TRIANGLES);
+	glVertex2f(0.3f, -0.335f);
+	glVertex2f(0.4f, -0.325f);
+	glVertex2f(0.3f, -0.315f);
+	glEnd();
+}
+
 void drawOutfit(int outfit) 
 {
 	if (outfit == 0)
 		;
+	// Fancy outfit
 	else if (outfit == 1)
 	{
 		// Top Hat Brim
@@ -450,6 +478,38 @@ void drawOutfit(int outfit)
 		glVertex2f(0.4f, -0.66f);
 		glVertex2f(0.45f, -0.66f);
 		glVertex2f(0.4f, -0.635f);
+
+		glEnd();
+	}
+	// Warm outfit
+	else if (outfit == 2)
+	{
+		float beanie[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+		float earmuff[4] = { 0.97f, 0.78f, 0.86f, 1.0f };
+		drawSemiCircle(0.21f, -0.335f, 0.03f, earmuff, 90, 5);
+		drawSemiCircle(0.39f, -0.335f, 0.03f, earmuff, 270, 5);
+		drawFace();
+		drawSemiCircle(0.3f, -0.275f, 0.065f, beanie, 0, 0);
+
+		// Scarf main
+		glColor4f(0.75f, 0.0f, 0.0f, 1.0f);
+
+		glBegin(GL_POLYGON);
+
+		glVertex2f(0.2f, -0.4);
+		glVertex2f(0.4f, -0.4);
+		glVertex2f(0.39f, -0.375);
+		glVertex2f(0.2f, -0.375f);
+
+		glEnd();
+
+		// Scarf tail
+		glBegin(GL_POLYGON);
+
+		glVertex2f(0.23f, -0.49);
+		glVertex2f(0.25f, -0.4);
+		glVertex2f(0.23f, -0.375);
+		glVertex2f(0.21f, -0.48f);
 
 		glEnd();
 	}
