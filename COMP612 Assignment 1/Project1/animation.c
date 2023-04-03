@@ -235,25 +235,38 @@ void display(void)
 
 	// Diagnostics
 
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+
+	glColor3f(1.0f, 0.0f, 0.0f);
+
 	if (diagnostics) {
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-
-		glColor3f(1.0f, 0.0f, 0.0f);
-
-		// Quit
+		// Diagnostics toggle
 		glRasterPos2f(-0.95f, 0.95f);
+		glutBitmapString(GLUT_BITMAP_HELVETICA_12, "Press [d] to toggle diagnostics off");
+		
+		// Quit
+		glRasterPos2f(-0.95f, 0.90f);
 		glutBitmapString(GLUT_BITMAP_HELVETICA_12, "Press [ESC] to quit");
 
 		// Snow toggle
-		glRasterPos2f(-0.95f, 0.90f);
+		glRasterPos2f(-0.95f, 0.85f);
+		glutBitmapString(GLUT_BITMAP_HELVETICA_12, "Press [o] to cycle through outfits");
+
+		// Snow toggle
+		glRasterPos2f(-0.95f, 0.8f);
 		glutBitmapString(GLUT_BITMAP_HELVETICA_12, "Press [s] to toggle snow");
 
 		// Active number of particles on screen
-		glRasterPos2f(-0.95f, 0.85f);
+		glRasterPos2f(-0.95f, 0.75f);
 		char particleCountDisplay[40];
 		sprintf_s(particleCountDisplay, 40, "Number of particles on screen: %d", particleCount);
 		glutBitmapString(GLUT_BITMAP_HELVETICA_12, particleCountDisplay);
+	}
+	else {
+		// Diagnostics off text
+		glRasterPos2f(-0.95f, 0.95f);
+		glutBitmapString(GLUT_BITMAP_HELVETICA_12, "Press [d] to toggle diagnostics on");
 	}
 
 	glutSwapBuffers();
