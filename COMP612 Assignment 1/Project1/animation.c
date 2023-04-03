@@ -173,6 +173,28 @@ void display(void)
 	glEnd();
 
 	glDisable(GL_BLEND);
+
+	// Sky effects
+	if (!dayTime)
+	{
+		
+	}
+	else
+	{
+		glPointSize(2); 
+		glBegin(GL_POINTS);
+
+		glColor4f(1.0f, 1.0f, 0.0f, skyColorBottom[3]);
+
+		glVertex2f(-0.45, 0.45);
+		glVertex2f(-0.25, 0.75);
+		glVertex2f(0.45, 0.38);
+		glVertex2f(0.15, 0.49);
+		glVertex2f(0.81, 0.29);
+		glVertex2f(-0.35, 0.35);
+
+		glEnd();
+	}
 	
 	// Terrain
 	float totalX = 0;
@@ -713,8 +735,7 @@ void think(void)
 		skyColorBottom[0] -= (skyColorBottomDay[0] - skyColorBottomNight[0]) / 100;
 		skyColorBottom[1] -= (skyColorBottomDay[1] - skyColorBottomNight[1]) / 100;
 		skyColorBottom[2] -= (skyColorBottomDay[2] - skyColorBottomNight[2]) / 100;
-		
-		skyColorBottom[3] -= 0.01f;
+		skyColorBottom[3] -= (skyColorBottomDay[3] - skyColorBottomNight[3]) / 100;
 	}
 	else if (!dayTime && skyColorTop[0] < skyColorTopDay[0])
 	{
@@ -725,8 +746,7 @@ void think(void)
 		skyColorBottom[0] += (skyColorBottomDay[0] - skyColorBottomNight[0]) / 100;
 		skyColorBottom[1] += (skyColorBottomDay[1] - skyColorBottomNight[1]) / 100;
 		skyColorBottom[2] += (skyColorBottomDay[2] - skyColorBottomNight[2]) / 100;
-
-		skyColorBottom[3] += 0.01f;
+		skyColorBottom[3] += (skyColorBottomDay[3] - skyColorBottomNight[3]) / 100;
 	}
 		
 
