@@ -98,6 +98,7 @@ bool snow;
 bool diagnostics;
 int outfit;
 int fall_speed;
+int direction;
 int quantity;
 int color;
 int dayTime;
@@ -383,6 +384,7 @@ void keyPressed(unsigned char key, int x, int y)
 			fall_speed = 0;
 		break;
 	case KEY_TOGGLE_SNOW_DIRECTION:
+		direction *= -1;
 		break;
 	case KEY_CYCLE_SNOW_QUNATITY:
 		if (quantity < 3)
@@ -672,6 +674,10 @@ void init(void)
 	snow = true;
 	diagnostics = true;
 	outfit = 0;
+	fall_speed = 0;
+	direction = -1;
+	quantity = 0;
+	color = 0;
 	dayTime = 0;
 
 	skyColorTopDay[0] = 0.878f;
@@ -707,11 +713,11 @@ void init(void)
 	// init the snow
 	for (int i = 0; i < MAX_PARTICLES; i++)
 	{
-		particleSystem[i].position.x = ((float)rand() / RAND_MAX * 3.5f) - 0.5f;
+		particleSystem[i].position.x = (((float)rand() / RAND_MAX * 3.5f) - 0.5f) * direction;
 
 		particleSystem[i].position.y = ((float)rand() / RAND_MAX) * 2 + 2.0f;
 
-		particleSystem[i].dy = (((float)rand() / RAND_MAX) + 0.2);
+		particleSystem[i].dy = (((float)rand() / RAND_MAX) + 0.1);
 		particleSystem[i].size = ((float)rand() / RAND_MAX) * 9.0f + 1.0f;
 		particleSystem[i].active = 1;
 		particleCount++;
@@ -814,29 +820,29 @@ void think(void)
 		{
 			particleSystem[i].active = 0;
 			particleSystem[i].dy = 0;
-			particleSystem[i].position.x = ((float)rand() / RAND_MAX * 3.5f) - 0.5f;
+			particleSystem[i].position.x = (((float)rand() / RAND_MAX * 3.5f) - 0.5f) * direction;
 			particleSystem[i].position.y = ((float)rand() / RAND_MAX) * 2 + 2.0f;
 		}
 
 		// Recycle particles to the top of the screen
-		if (particleSystem[i].position.y <= -1.0 && particleSystem[i].active == 1)
+		if (particleSystem[i].position.y < -1.0 && particleSystem[i].active == 1)
 		{
 
-			particleSystem[i].position.x = ((float)rand() / RAND_MAX * 3.5f) - 0.5f;
+			particleSystem[i].position.x = (((float)rand() / RAND_MAX * 3.5f) - 0.5f) * direction;
 			particleSystem[i].position.y = ((float)rand() / RAND_MAX) * 2 + 2.0f;
-			particleSystem[i].dy = (((float)rand() / RAND_MAX) + 0.2);
+			particleSystem[i].dy = (((float)rand() / RAND_MAX) + 0.1);
 		}
 
 		// Reactivate particles
 		if (snow && particleSystem[i].dy == 0)
 		{
-			particleSystem[i].dy = (((float)rand() / RAND_MAX) + 0.2);
+			particleSystem[i].dy = (((float)rand() / RAND_MAX) + 0.1);
 			particleSystem[i].active = 1;
 		}
 
 		// Update particle position
-		particleSystem[i].position.x -= 0.35f * FRAME_TIME_SEC;
-		particleSystem[i].position.y -= particleSystem[i].dy * FRAME_TIME_SEC;
+		particleSystem[i].position.x -= (0.25f * direction) * FRAME_TIME_SEC;
+		particleSystem[i].position.y -= (particleSystem[i].dy * fall_speed+1) * FRAME_TIME_SEC;
 
 		// Count number of active particles
 		if (particleSystem[i].position.y > -1.0
