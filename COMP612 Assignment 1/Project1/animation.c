@@ -13,12 +13,11 @@
 #include <time.h>
 #include <stdbool.h>
 
-
  /******************************************************************************
   * Animation & Timing Setup
   ******************************************************************************/
 
-  // Target frame rate (number of Frames Per Second).
+// Target frame rate (number of Frames Per Second).
 #define TARGET_FPS 60				
 
 // Ideal time each frame should be displayed for (in milliseconds).
@@ -45,6 +44,7 @@ unsigned int frameStartTime = 0;
 #define KEY_TOGGLE_SNOW			115 // s key.
 #define KEY_TOGGLE_DIAGNOSTICS	100 // d key.
 #define KEY_CYCLE_OUTFIT		111	// o key.
+#define KEY_CYCLE_TIME			116 // t key.
 
 /******************************************************************************
  * GLUT Callback Prototypes
@@ -54,7 +54,6 @@ void display(void);
 void reshape(int width, int h);
 void keyPressed(unsigned char key, int x, int y);
 void idle(void);
-
 
 /******************************************************************************
  * Animation-Specific Function Prototypes (add your own here)
@@ -94,8 +93,13 @@ int particleCount;
 bool snow;
 bool diagnostics;
 int outfit;
-
-
+int dayTime;
+float skyColorTop[4];
+float skyColorBottom[4];
+float skyColorTopDay[4];
+float skyColorBottomDay[4];
+float skyColorTopNight[4];
+float skyColorBottomNight[4];
 
 /******************************************************************************
  * Entry Point (don't put anything except the main function here)
@@ -154,17 +158,22 @@ void display(void)
 
 
 	// Background
+	// Day
+	glEnable(GL_BLEND);
+
 	glBegin(GL_QUADS);
 
-	glColor3f(0.878f, 0.947f, 0.802f);
+	glColor4f(skyColorTop[0], skyColorTop[1], skyColorTop[2], skyColorTop[3]);
 	glVertex2f(-1.0f, -1.0f);
 	glVertex2f(1.0f, -1.0f);
-	glColor3f(0.678f, 0.847f, 0.902f);
+	glColor4f(skyColorBottom[0], skyColorBottom[1], skyColorBottom[2], skyColorBottom[3]);
 	glVertex2f(1.0f, 1.0f);
 	glVertex2f(-1.0f, 1.0f);
 
 	glEnd();
 
+	glDisable(GL_BLEND);
+	
 	// Terrain
 	float totalX = 0;
 
@@ -254,8 +263,12 @@ void display(void)
 		glRasterPos2f(-0.95f, 0.8f);
 		glutBitmapString(GLUT_BITMAP_HELVETICA_12, "Press [s] to toggle snow");
 
-		// Active number of particles on screen
+		// Time cycle
 		glRasterPos2f(-0.95f, 0.75f);
+		glutBitmapString(GLUT_BITMAP_HELVETICA_12, "Press [t] to cycle between day/night");
+
+		// Active number of particles on screen
+		glRasterPos2f(-0.95f, 0.70);
 		char particleCountDisplay[40];
 		sprintf_s(particleCountDisplay, 40, "Number of particles on screen: %d", particleCount);
 		glutBitmapString(GLUT_BITMAP_HELVETICA_12, particleCountDisplay);
@@ -265,6 +278,7 @@ void display(void)
 		glRasterPos2f(-0.95f, 0.95f);
 		glutBitmapString(GLUT_BITMAP_HELVETICA_12, "Press [d] to toggle diagnostics on");
 	}
+
 
 	glutSwapBuffers();
 }
@@ -305,6 +319,9 @@ void keyPressed(unsigned char key, int x, int y)
 			outfit++;
 		else
 			outfit = 0;
+		break;
+	case KEY_CYCLE_TIME:
+		dayTime = 1 - dayTime;
 		break;
 	}
 }
@@ -582,6 +599,37 @@ void init(void)
 	snow = true;
 	diagnostics = true;
 	outfit = 0;
+	dayTime = 0;
+
+	skyColorTopDay[0] = 0.878f;
+	skyColorTopDay[1] = 0.947f;
+	skyColorTopDay[2] = 0.802f;
+	skyColorTopDay[3] = 1.0f;
+
+	skyColorBottomDay[0] = 0.678f;
+	skyColorBottomDay[1] = 0.847f;
+	skyColorBottomDay[2] = 0.902f;
+	skyColorBottomDay[3] = 1.0f;
+
+	skyColorTopNight[0] = 0.0f;
+	skyColorTopNight[1] = 0.0f;
+	skyColorTopNight[2] = 0.345f;
+	skyColorTopNight[3] = 1.0f;
+
+	skyColorBottomNight[0] = 0.0f;
+	skyColorBottomNight[1] = 0.0f;
+	skyColorBottomNight[2] = 0.555f;
+	skyColorBottomNight[3] = 0.1f;
+
+	skyColorTop[0] = skyColorTopDay[0];
+	skyColorTop[1] = skyColorTopDay[1];
+	skyColorTop[2] = skyColorTopDay[2];
+	skyColorTop[3] = skyColorTopDay[3];
+
+	skyColorBottom[0] = skyColorBottomDay[0];
+	skyColorBottom[1] = skyColorBottomDay[1];
+	skyColorBottom[2] = skyColorBottomDay[2];
+	skyColorBottom[3] = skyColorBottomDay[3];
 
 	// init the snow
 	for (int i = 0; i < MAX_PARTICLES; i++)
@@ -654,6 +702,33 @@ void think(void)
 		brightness of lights, etc.
 	*/
 
+	// Update background if time has been changed
+
+	if (dayTime && skyColorTop[0] > skyColorTopNight[0])
+	{
+		skyColorTop[0] -= (skyColorTopDay[0] - skyColorTopNight[0]) / 100;
+		skyColorTop[1] -= (skyColorTopDay[1] - skyColorTopNight[1]) / 100;
+		skyColorTop[2] -= (skyColorTopDay[2] - skyColorTopNight[2]) / 100;
+
+		skyColorBottom[0] -= (skyColorBottomDay[0] - skyColorBottomNight[0]) / 100;
+		skyColorBottom[1] -= (skyColorBottomDay[1] - skyColorBottomNight[1]) / 100;
+		skyColorBottom[2] -= (skyColorBottomDay[2] - skyColorBottomNight[2]) / 100;
+		
+		skyColorBottom[3] -= 0.01f;
+	}
+	else if (!dayTime && skyColorTop[0] < skyColorTopDay[0])
+	{
+		skyColorTop[0] += (skyColorTopDay[0] - skyColorTopNight[0]) / 100;
+		skyColorTop[1] += (skyColorTopDay[1] - skyColorTopNight[1]) / 100;
+		skyColorTop[2] += (skyColorTopDay[2] - skyColorTopNight[2]) / 100;
+
+		skyColorBottom[0] += (skyColorBottomDay[0] - skyColorBottomNight[0]) / 100;
+		skyColorBottom[1] += (skyColorBottomDay[1] - skyColorBottomNight[1]) / 100;
+		skyColorBottom[2] += (skyColorBottomDay[2] - skyColorBottomNight[2]) / 100;
+
+		skyColorBottom[3] += 0.01f;
+	}
+		
 
 	// Update snow
 	int activeCount = 1000;
