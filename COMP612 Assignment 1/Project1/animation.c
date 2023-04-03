@@ -40,11 +40,15 @@ unsigned int frameStartTime = 0;
  // Note: USE ONLY LOWERCASE CHARACTERS HERE. The keyboard handler provided converts all
  // characters typed by the user to lowercase, so the SHIFT key is ignored.
 
-#define KEY_EXIT				27  // Escape key.
-#define KEY_TOGGLE_SNOW			115 // s key.
-#define KEY_TOGGLE_DIAGNOSTICS	100 // d key.
-#define KEY_CYCLE_OUTFIT		111	// o key.
-#define KEY_CYCLE_TIME			116 // t key.
+#define KEY_EXIT					27  // Escape key.
+#define KEY_TOGGLE_SNOW				115 // s key.
+#define KEY_TOGGLE_DIAGNOSTICS		100 // d key.
+#define KEY_CYCLE_OUTFIT			111	// o key.
+#define KEY_TOGGLE_TIME				116 // t key.
+#define KEY_CYCLE_FALL_SPEED		102 // f key.
+#define KEY_TOGGLE_SNOW_DIRECTION	103 // g key.
+#define KEY_CYCLE_SNOW_QUNATITY		104 // h key.
+#define KEY_CYCLE_SNOW_COLOR		106 // j key.
 
 /******************************************************************************
  * GLUT Callback Prototypes
@@ -93,6 +97,10 @@ int particleCount;
 bool snow;
 bool diagnostics;
 int outfit;
+int fall_speed;
+int direction;
+int quantity;
+int color;
 int dayTime;
 float skyColorTop[4];
 float skyColorBottom[4];
@@ -177,6 +185,14 @@ void display(void)
 	// Sky effects
 	if (!dayTime)
 	{
+		float cloud[4] = { 1.0f, 1.0f, 1.0f, skyColorBottom[3] };
+
+		drawCircle(-0.45, 0.45, 0.1, cloud);
+		drawCircle(-0.35, 0.5, 0.1, cloud);
+		drawCircle(-0.35, 0.45, 0.1, cloud);
+		drawCircle(-0.25, 0.55, 0.1, cloud);
+		drawCircle(-0.20, 0.45, 0.1, cloud);
+		drawCircle(-0.15, 0.5, 0.1, cloud);
 		
 	}
 	else
@@ -248,9 +264,17 @@ void display(void)
 	// Snow
 	glEnable(GL_BLEND);
 
-	for (int i = 0; i < MAX_PARTICLES; i++)
+	for (int i = 0; i < MAX_PARTICLES - quantity; i++)
 	{
-		glColor4f(0.753f, 0.753f, 0.753f, particleSystem[i].dy - 0.2f);
+		if (color == 0) 
+			glColor4f(0.753f, 0.753f, 0.753f, particleSystem[i].dy - 0.2f);
+		else if (color == 1)
+			glColor4f(0.0f, 1.0f, 0.0f, particleSystem[i].dy - 0.2f);
+		else if(color == 2)
+			glColor4f(1.0f, 0.0f, 0.0f, particleSystem[i].dy - 0.2f);
+		else 
+			glColor4f(0.0f, 0.0f, 1.0f, particleSystem[i].dy - 0.2f);
+			
 		glPointSize(particleSystem[i].size);
 
 		glBegin(GL_POINTS);
@@ -283,14 +307,30 @@ void display(void)
 
 		// Snow toggle
 		glRasterPos2f(-0.95f, 0.8f);
-		glutBitmapString(GLUT_BITMAP_HELVETICA_12, "Press [s] to toggle snow");
+		glutBitmapString(GLUT_BITMAP_HELVETICA_12, "Press [t] to cycle between day/night and clouds/stars");
 
 		// Time cycle
 		glRasterPos2f(-0.95f, 0.75f);
-		glutBitmapString(GLUT_BITMAP_HELVETICA_12, "Press [t] to cycle between day/night");
+		glutBitmapString(GLUT_BITMAP_HELVETICA_12, "Press [f] to toggle snow fallspeed");
+
+		// Time cycle
+		glRasterPos2f(-0.95f, 0.7f);
+		glutBitmapString(GLUT_BITMAP_HELVETICA_12, "Press [g] to toggle snow direction");
+
+		// Time cycle
+		glRasterPos2f(-0.95f, 0.65f);
+		glutBitmapString(GLUT_BITMAP_HELVETICA_12, "Press [h] to toggle snow quantity");
+
+		// Time cycle
+		glRasterPos2f(-0.95f, 0.6f);
+		glutBitmapString(GLUT_BITMAP_HELVETICA_12, "Press [j] to toggle colour");
+
+		// Time cycle
+		glRasterPos2f(-0.95f, 0.55f);
+		glutBitmapString(GLUT_BITMAP_HELVETICA_12, "Press [s] to toggle snow");
 
 		// Active number of particles on screen
-		glRasterPos2f(-0.95f, 0.70);
+		glRasterPos2f(-0.95f, 0.5);
 		char particleCountDisplay[40];
 		sprintf_s(particleCountDisplay, 40, "Number of particles on screen: %d", particleCount);
 		glutBitmapString(GLUT_BITMAP_HELVETICA_12, particleCountDisplay);
@@ -342,8 +382,31 @@ void keyPressed(unsigned char key, int x, int y)
 		else
 			outfit = 0;
 		break;
-	case KEY_CYCLE_TIME:
+	case KEY_TOGGLE_TIME:
 		dayTime = 1 - dayTime;
+		break;
+	case KEY_CYCLE_FALL_SPEED:
+		if (fall_speed < 3)
+			fall_speed++;
+		else
+			fall_speed = 0;
+		break;
+	case KEY_TOGGLE_SNOW_DIRECTION:
+		direction *= -1;
+		break;
+	case KEY_CYCLE_SNOW_QUNATITY:
+		if (quantity < 750)
+			quantity += 250;
+		else
+			quantity = 0;
+
+		printf("%d", quantity);
+		break;
+	case KEY_CYCLE_SNOW_COLOR:
+		if (color < 3)
+			color++;
+		else
+			color = 0;
 		break;
 	}
 }
@@ -621,6 +684,10 @@ void init(void)
 	snow = true;
 	diagnostics = true;
 	outfit = 0;
+	fall_speed = 0;
+	direction = -1;
+	quantity = 0;
+	color = 0;
 	dayTime = 0;
 
 	skyColorTopDay[0] = 0.878f;
@@ -656,11 +723,11 @@ void init(void)
 	// init the snow
 	for (int i = 0; i < MAX_PARTICLES; i++)
 	{
-		particleSystem[i].position.x = ((float)rand() / RAND_MAX * 3.5f) - 0.5f;
+		particleSystem[i].position.x = (((float)rand() / RAND_MAX * 3.5f) - 0.5f) * direction;
 
 		particleSystem[i].position.y = ((float)rand() / RAND_MAX) * 2 + 2.0f;
 
-		particleSystem[i].dy = (((float)rand() / RAND_MAX) + 0.2);
+		particleSystem[i].dy = (((float)rand() / RAND_MAX) + 0.1);
 		particleSystem[i].size = ((float)rand() / RAND_MAX) * 9.0f + 1.0f;
 		particleSystem[i].active = 1;
 		particleCount++;
@@ -751,8 +818,8 @@ void think(void)
 		
 
 	// Update snow
-	int activeCount = 1000;
-	for (int i = 0; i < MAX_PARTICLES; i++)
+	int activeCount = 1000 - quantity;
+	for (int i = 0; i < MAX_PARTICLES - quantity; i++)
 	{
 
 		// Deactivate particles
@@ -763,29 +830,30 @@ void think(void)
 		{
 			particleSystem[i].active = 0;
 			particleSystem[i].dy = 0;
-			particleSystem[i].position.x = ((float)rand() / RAND_MAX * 3.5f) - 0.5f;
+			particleSystem[i].position.x = (((float)rand() / RAND_MAX * 3.5f) - 0.5f) * direction;
 			particleSystem[i].position.y = ((float)rand() / RAND_MAX) * 2 + 2.0f;
 		}
 
 		// Recycle particles to the top of the screen
-		if (particleSystem[i].position.y <= -1.0 && particleSystem[i].active == 1)
+		if (particleSystem[i].position.y < -1.0 && particleSystem[i].active == 1)
 		{
 
-			particleSystem[i].position.x = ((float)rand() / RAND_MAX * 3.5f) - 0.5f;
-			particleSystem[i].position.y = ((float)rand() / RAND_MAX) * 2 + 2.0f;
-			particleSystem[i].dy = (((float)rand() / RAND_MAX) + 0.2);
+			particleSystem[i].position.x = (((float)rand() / RAND_MAX * 3.5f) - 0.5f) * direction;
+			particleSystem[i].position.y = ((float)rand() / RAND_MAX) * 2 + 0.5f;
+			particleSystem[i].dy = (((float)rand() / RAND_MAX) + 0.1);
 		}
 
 		// Reactivate particles
 		if (snow && particleSystem[i].dy == 0)
 		{
-			particleSystem[i].dy = (((float)rand() / RAND_MAX) + 0.2);
+			particleSystem[i].dy = (((float)rand() / RAND_MAX) + 0.1);
 			particleSystem[i].active = 1;
 		}
 
 		// Update particle position
-		particleSystem[i].position.x -= 0.35f * FRAME_TIME_SEC;
-		particleSystem[i].position.y -= particleSystem[i].dy * FRAME_TIME_SEC;
+		particleSystem[i].position.x -= (0.25f * direction) * FRAME_TIME_SEC;
+		particleSystem[i].position.y -= (particleSystem[i].dy * fall_speed+1) * FRAME_TIME_SEC;
+		
 
 		// Count number of active particles
 		if (particleSystem[i].position.y > -1.0
