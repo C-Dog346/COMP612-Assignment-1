@@ -843,6 +843,7 @@ void think(void)
 		// Update particle position
 		particleSystem[i].position.x -= (0.25f * direction) * FRAME_TIME_SEC;
 		particleSystem[i].position.y -= (particleSystem[i].dy * fall_speed+1) * FRAME_TIME_SEC;
+		
 
 		// Count number of active particles
 		if (particleSystem[i].position.y > -1.0
@@ -853,6 +854,7 @@ void think(void)
 		else
 			activeCount--;
 	}
+	printf("%f", particleSystem[0].position.y);
 	particleCount = activeCount;
 }
 
