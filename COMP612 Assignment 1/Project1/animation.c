@@ -94,6 +94,12 @@ bool snow;
 bool diagnostics;
 int outfit;
 int dayTime;
+float skyColorTop[4];
+float skyColorBottom[4];
+float skyColorTopDay[4];
+float skyColorBottomDay[4];
+float skyColorTopNight[4];
+float skyColorBottomNight[4];
 
 /******************************************************************************
  * Entry Point (don't put anything except the main function here)
@@ -152,32 +158,46 @@ void display(void)
 
 
 	// Background
-	// Day
+	//// Day
 	glEnable(GL_BLEND);
-	if (!dayTime) {
-		glBegin(GL_QUADS);
+	//if (!dayTime) {
+	//	// Sky
+	//	glBegin(GL_QUADS);
 
-		glColor4f(0.878f, 0.947f, 0.802f, 1.0f);
-		glVertex2f(-1.0f, -1.0f);
-		glVertex2f(1.0f, -1.0f);
-		glColor4f(0.678f, 0.847f, 0.902f, 1.0f);
-		glVertex2f(1.0f, 1.0f);
-		glVertex2f(-1.0f, 1.0f);
+	//	glColor4f(skyColorTopDay[0], skyColorTopDay[1], skyColorTopDay[2], skyColorTopDay[3]);
+	//	glVertex2f(-1.0f, -1.0f);
+	//	glVertex2f(1.0f, -1.0f);
+	//	glColor4f(skyColorBottomDay[0], skyColorBottomDay[1], skyColorBottomDay[2], skyColorBottomDay[3]);
+	//	glVertex2f(1.0f, 1.0f);
+	//	glVertex2f(-1.0f, 1.0f);
 
-		glEnd();
-	}
-	else {
-		glBegin(GL_QUADS);
+	//	glEnd();
+	//}
+	//else {
+	//	// Sky
+	//	glBegin(GL_QUADS);
 
-		glColor4f(0.0f, 0.0f, 0.555f, 1.0f);
-		glVertex2f(-1.0f, -1.0f);
-		glVertex2f(1.0f, -1.0f);
-		glColor4f(0.0f, 0.0f, 0.345f, 0.1f);
-		glVertex2f(1.0f, 1.0f);
-		glVertex2f(-1.0f, 1.0f);
+	//	glColor4f(skyColorTopNight[0], skyColorTopNight[1], skyColorTopNight[2], skyColorTopNight[3]);
+	//	glVertex2f(-1.0f, -1.0f);
+	//	glVertex2f(1.0f, -1.0f);
+	//	glColor4f(skyColorBottomNight[0], skyColorBottomNight[1], skyColorBottomNight[2], skyColorBottomNight[3]);
+	//	glVertex2f(1.0f, 1.0f);
+	//	glVertex2f(-1.0f, 1.0f);
 
-		glEnd();
-	}
+	//	glEnd();
+	//}
+
+	glBegin(GL_QUADS);
+
+	glColor4f(skyColorTop[0], skyColorTop[1], skyColorTop[2], skyColorTop[3]);
+	glVertex2f(-1.0f, -1.0f);
+	glVertex2f(1.0f, -1.0f);
+	glColor4f(skyColorBottom[0], skyColorBottom[1], skyColorBottom[2], skyColorBottom[3]);
+	glVertex2f(1.0f, 1.0f);
+	glVertex2f(-1.0f, 1.0f);
+
+	glEnd();
+
 	glDisable(GL_BLEND);
 	
 	// Terrain
@@ -606,6 +626,36 @@ void init(void)
 	outfit = 0;
 	dayTime = 0;
 
+	skyColorTopDay[0] = 0.878f;
+	skyColorTopDay[1] = 0.947f;
+	skyColorTopDay[2] = 0.802f;
+	skyColorTopDay[3] = 1.0f;
+
+	skyColorBottomDay[0] = 0.678f;
+	skyColorBottomDay[1] = 0.847f;
+	skyColorBottomDay[2] = 0.902f;
+	skyColorBottomDay[3] = 1.0f;
+
+	skyColorTopNight[0] = 0.0f;
+	skyColorTopNight[1] = 0.0f;
+	skyColorTopNight[2] = 0.345f;
+	skyColorTopNight[3] = 1.0f;
+
+	skyColorBottomNight[0] = 0.0f;
+	skyColorBottomNight[1] = 0.0f;
+	skyColorBottomNight[2] = 0.555f;
+	skyColorBottomNight[3] = 0.1f;
+
+	skyColorTop[0] = skyColorTopDay[0];
+	skyColorTop[1] = skyColorTopDay[1];
+	skyColorTop[2] = skyColorTopDay[2];
+	skyColorTop[3] = skyColorTopDay[3];
+
+	skyColorBottom[0] = skyColorBottomDay[0];
+	skyColorBottom[1] = skyColorBottomDay[1];
+	skyColorBottom[2] = skyColorBottomDay[2];
+	skyColorBottom[3] = skyColorBottomDay[3];
+
 	// init the snow
 	for (int i = 0; i < MAX_PARTICLES; i++)
 	{
@@ -677,6 +727,24 @@ void think(void)
 		brightness of lights, etc.
 	*/
 
+	// Update background if time has been changed
+
+	if (dayTime && skyColorTop[3] > 0.1f) 
+	{
+		skyColorTop[0] -= (skyColorTopDay[0] - skyColorTopNight[0]) / 10;
+		skyColorTop[1];
+		skyColorTop[2];
+		
+		skyColorBottom[3] -= 0.01f;
+	}
+	else if (!dayTime && skyColorTop[3] < 1.0f) 
+	{
+		skyColorTop[0];
+		skyColorTop[1];
+		skyColorTop[2];
+		skyColorBottom[3] += 0.01f;
+	}
+		
 
 	// Update snow
 	int activeCount = 1000;
