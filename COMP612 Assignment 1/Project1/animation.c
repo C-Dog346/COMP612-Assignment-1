@@ -13,12 +13,11 @@
 #include <time.h>
 #include <stdbool.h>
 
-
  /******************************************************************************
   * Animation & Timing Setup
   ******************************************************************************/
 
-  // Target frame rate (number of Frames Per Second).
+// Target frame rate (number of Frames Per Second).
 #define TARGET_FPS 60				
 
 // Ideal time each frame should be displayed for (in milliseconds).
@@ -45,6 +44,7 @@ unsigned int frameStartTime = 0;
 #define KEY_TOGGLE_SNOW			115 // s key.
 #define KEY_TOGGLE_DIAGNOSTICS	100 // d key.
 #define KEY_CYCLE_OUTFIT		111	// o key.
+#define KEY_CYCLE_TIME			116 // t key.
 
 /******************************************************************************
  * GLUT Callback Prototypes
@@ -54,7 +54,6 @@ void display(void);
 void reshape(int width, int h);
 void keyPressed(unsigned char key, int x, int y);
 void idle(void);
-
 
 /******************************************************************************
  * Animation-Specific Function Prototypes (add your own here)
@@ -94,8 +93,7 @@ int particleCount;
 bool snow;
 bool diagnostics;
 int outfit;
-
-
+int dayTime;
 
 /******************************************************************************
  * Entry Point (don't put anything except the main function here)
@@ -154,17 +152,34 @@ void display(void)
 
 
 	// Background
-	glBegin(GL_QUADS);
+	// Day
+	glEnable(GL_BLEND);
+	if (!dayTime) {
+		glBegin(GL_QUADS);
 
-	glColor3f(0.878f, 0.947f, 0.802f);
-	glVertex2f(-1.0f, -1.0f);
-	glVertex2f(1.0f, -1.0f);
-	glColor3f(0.678f, 0.847f, 0.902f);
-	glVertex2f(1.0f, 1.0f);
-	glVertex2f(-1.0f, 1.0f);
+		glColor4f(0.878f, 0.947f, 0.802f, 1.0f);
+		glVertex2f(-1.0f, -1.0f);
+		glVertex2f(1.0f, -1.0f);
+		glColor4f(0.678f, 0.847f, 0.902f, 1.0f);
+		glVertex2f(1.0f, 1.0f);
+		glVertex2f(-1.0f, 1.0f);
 
-	glEnd();
+		glEnd();
+	}
+	else {
+		glBegin(GL_QUADS);
 
+		glColor4f(0.0f, 0.0f, 0.555f, 1.0f);
+		glVertex2f(-1.0f, -1.0f);
+		glVertex2f(1.0f, -1.0f);
+		glColor4f(0.0f, 0.0f, 0.345f, 0.1f);
+		glVertex2f(1.0f, 1.0f);
+		glVertex2f(-1.0f, 1.0f);
+
+		glEnd();
+	}
+	glDisable(GL_BLEND);
+	
 	// Terrain
 	float totalX = 0;
 
@@ -254,8 +269,12 @@ void display(void)
 		glRasterPos2f(-0.95f, 0.8f);
 		glutBitmapString(GLUT_BITMAP_HELVETICA_12, "Press [s] to toggle snow");
 
-		// Active number of particles on screen
+		// Time cycle
 		glRasterPos2f(-0.95f, 0.75f);
+		glutBitmapString(GLUT_BITMAP_HELVETICA_12, "Press [t] to cycle between day/night");
+
+		// Active number of particles on screen
+		glRasterPos2f(-0.95f, 0.70);
 		char particleCountDisplay[40];
 		sprintf_s(particleCountDisplay, 40, "Number of particles on screen: %d", particleCount);
 		glutBitmapString(GLUT_BITMAP_HELVETICA_12, particleCountDisplay);
@@ -265,6 +284,7 @@ void display(void)
 		glRasterPos2f(-0.95f, 0.95f);
 		glutBitmapString(GLUT_BITMAP_HELVETICA_12, "Press [d] to toggle diagnostics on");
 	}
+
 
 	glutSwapBuffers();
 }
@@ -306,6 +326,8 @@ void keyPressed(unsigned char key, int x, int y)
 		else
 			outfit = 0;
 		break;
+	case KEY_CYCLE_TIME:
+		dayTime = 1 - dayTime;
 	}
 }
 
@@ -582,6 +604,7 @@ void init(void)
 	snow = true;
 	diagnostics = true;
 	outfit = 0;
+	dayTime = 0;
 
 	// init the snow
 	for (int i = 0; i < MAX_PARTICLES; i++)
