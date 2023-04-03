@@ -264,9 +264,17 @@ void display(void)
 	// Snow
 	glEnable(GL_BLEND);
 
-	for (int i = 0; i < MAX_PARTICLES; i++)
+	for (int i = 0; i < MAX_PARTICLES - quantity; i++)
 	{
-		glColor4f(0.753f, 0.753f, 0.753f, particleSystem[i].dy - 0.2f);
+		if (color == 0) 
+			glColor4f(0.753f, 0.753f, 0.753f, particleSystem[i].dy - 0.2f);
+		else if (color == 1)
+			glColor4f(0.0f, 1.0f, 0.0f, particleSystem[i].dy - 0.2f);
+		else if(color == 2)
+			glColor4f(1.0f, 0.0f, 0.0f, particleSystem[i].dy - 0.2f);
+		else 
+			glColor4f(0.0f, 0.0f, 1.0f, particleSystem[i].dy - 0.2f);
+			
 		glPointSize(particleSystem[i].size);
 
 		glBegin(GL_POINTS);
@@ -387,10 +395,12 @@ void keyPressed(unsigned char key, int x, int y)
 		direction *= -1;
 		break;
 	case KEY_CYCLE_SNOW_QUNATITY:
-		if (quantity < 3)
-			quantity++;
+		if (quantity < 750)
+			quantity += 250;
 		else
 			quantity = 0;
+
+		printf("%d", quantity);
 		break;
 	case KEY_CYCLE_SNOW_COLOR:
 		if (color < 3)
@@ -808,8 +818,8 @@ void think(void)
 		
 
 	// Update snow
-	int activeCount = 1000;
-	for (int i = 0; i < MAX_PARTICLES; i++)
+	int activeCount = 1000 - quantity;
+	for (int i = 0; i < MAX_PARTICLES - quantity; i++)
 	{
 
 		// Deactivate particles
