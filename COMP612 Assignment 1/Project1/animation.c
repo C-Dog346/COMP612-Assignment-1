@@ -40,11 +40,15 @@ unsigned int frameStartTime = 0;
  // Note: USE ONLY LOWERCASE CHARACTERS HERE. The keyboard handler provided converts all
  // characters typed by the user to lowercase, so the SHIFT key is ignored.
 
-#define KEY_EXIT				27  // Escape key.
-#define KEY_TOGGLE_SNOW			115 // s key.
-#define KEY_TOGGLE_DIAGNOSTICS	100 // d key.
-#define KEY_CYCLE_OUTFIT		111	// o key.
-#define KEY_CYCLE_TIME			116 // t key.
+#define KEY_EXIT					27  // Escape key.
+#define KEY_TOGGLE_SNOW				115 // s key.
+#define KEY_TOGGLE_DIAGNOSTICS		100 // d key.
+#define KEY_CYCLE_OUTFIT			111	// o key.
+#define KEY_TOGGLE_TIME				116 // t key.
+#define KEY_CYCLE_FALL_SPEED		102 // f key.
+#define KEY_TOGGLE_SNOW_DIRECTION	103 // g key.
+#define KEY_CYCLE_SNOW_QUNATITY		104 // h key.
+#define KEY_CYCLE_SNOW_COLOR		106 // j key.
 
 /******************************************************************************
  * GLUT Callback Prototypes
@@ -93,6 +97,9 @@ int particleCount;
 bool snow;
 bool diagnostics;
 int outfit;
+int fall_speed;
+int quantity;
+int color;
 int dayTime;
 float skyColorTop[4];
 float skyColorBottom[4];
@@ -177,6 +184,14 @@ void display(void)
 	// Sky effects
 	if (!dayTime)
 	{
+		float cloud[4] = { 1.0f, 1.0f, 1.0f, skyColorBottom[3] };
+
+		drawCircle(-0.45, 0.45, 0.1, cloud);
+		drawCircle(-0.35, 0.5, 0.1, cloud);
+		drawCircle(-0.35, 0.45, 0.1, cloud);
+		drawCircle(-0.25, 0.55, 0.1, cloud);
+		drawCircle(-0.20, 0.45, 0.1, cloud);
+		drawCircle(-0.15, 0.5, 0.1, cloud);
 		
 	}
 	else
@@ -283,14 +298,30 @@ void display(void)
 
 		// Snow toggle
 		glRasterPos2f(-0.95f, 0.8f);
-		glutBitmapString(GLUT_BITMAP_HELVETICA_12, "Press [s] to toggle snow");
+		glutBitmapString(GLUT_BITMAP_HELVETICA_12, "Press [t] to cycle between day/night and clouds/stars");
 
 		// Time cycle
 		glRasterPos2f(-0.95f, 0.75f);
-		glutBitmapString(GLUT_BITMAP_HELVETICA_12, "Press [t] to cycle between day/night");
+		glutBitmapString(GLUT_BITMAP_HELVETICA_12, "Press [f] to toggle snow fallspeed");
+
+		// Time cycle
+		glRasterPos2f(-0.95f, 0.7f);
+		glutBitmapString(GLUT_BITMAP_HELVETICA_12, "Press [g] to toggle snow direction");
+
+		// Time cycle
+		glRasterPos2f(-0.95f, 0.65f);
+		glutBitmapString(GLUT_BITMAP_HELVETICA_12, "Press [h] to toggle snow quantity");
+
+		// Time cycle
+		glRasterPos2f(-0.95f, 0.6f);
+		glutBitmapString(GLUT_BITMAP_HELVETICA_12, "Press [j] to toggle colour");
+
+		// Time cycle
+		glRasterPos2f(-0.95f, 0.55f);
+		glutBitmapString(GLUT_BITMAP_HELVETICA_12, "Press [s] to toggle snow");
 
 		// Active number of particles on screen
-		glRasterPos2f(-0.95f, 0.70);
+		glRasterPos2f(-0.95f, 0.5);
 		char particleCountDisplay[40];
 		sprintf_s(particleCountDisplay, 40, "Number of particles on screen: %d", particleCount);
 		glutBitmapString(GLUT_BITMAP_HELVETICA_12, particleCountDisplay);
@@ -342,8 +373,28 @@ void keyPressed(unsigned char key, int x, int y)
 		else
 			outfit = 0;
 		break;
-	case KEY_CYCLE_TIME:
+	case KEY_TOGGLE_TIME:
 		dayTime = 1 - dayTime;
+		break;
+	case KEY_CYCLE_FALL_SPEED:
+		if (fall_speed < 3)
+			fall_speed++;
+		else
+			fall_speed = 0;
+		break;
+	case KEY_TOGGLE_SNOW_DIRECTION:
+		break;
+	case KEY_CYCLE_SNOW_QUNATITY:
+		if (quantity < 3)
+			quantity++;
+		else
+			quantity = 0;
+		break;
+	case KEY_CYCLE_SNOW_COLOR:
+		if (color < 3)
+			color++;
+		else
+			color = 0;
 		break;
 	}
 }
