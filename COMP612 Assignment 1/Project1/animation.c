@@ -829,7 +829,7 @@ void think(void)
 		{
 
 			particleSystem[i].position.x = (((float)rand() / RAND_MAX * 3.5f) - 0.5f) * direction;
-			particleSystem[i].position.y = ((float)rand() / RAND_MAX) * 2 + 2.0f;
+			particleSystem[i].position.y = ((float)rand() / RAND_MAX) * 2 + 0.5f;
 			particleSystem[i].dy = (((float)rand() / RAND_MAX) + 0.1);
 		}
 
@@ -854,7 +854,6 @@ void think(void)
 		else
 			activeCount--;
 	}
-	printf("%f", particleSystem[0].position.y);
 	particleCount = activeCount;
 }
 
