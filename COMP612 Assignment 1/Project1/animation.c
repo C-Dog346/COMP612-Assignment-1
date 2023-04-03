@@ -337,7 +337,7 @@ void keyPressed(unsigned char key, int x, int y)
 		break;
 
 	case KEY_CYCLE_OUTFIT:
-		if (outfit < 3)
+		if (outfit < 4)
 			outfit++;
 		else
 			outfit = 0;
@@ -580,6 +580,7 @@ void drawOutfit(int outfit)
 
 		glEnd();
 
+		// Second Triangle
 		glBegin(GL_TRIANGLES);
 
 		glVertex2f(0.05f, -0.45f);
@@ -588,6 +589,7 @@ void drawOutfit(int outfit)
 
 		glEnd();
 
+		// Third Triangle
 		glBegin(GL_TRIANGLES);
 
 		glVertex2f(0.0f, -0.6f);
@@ -605,6 +607,34 @@ void drawOutfit(int outfit)
 		drawCircle(0.545f, -0.45f, 0.01f, redBauble);
 		drawCircle(0.005f, -0.6f, 0.01f, redBauble);
 		drawCircle(0.595f, -0.6f, 0.01f, redBauble);
+
+		drawFace();
+	}
+	else if (outfit == 4)
+	{
+		float ecms[4] = { 1.0f, 0.5547f, 0.0f, 1.0f };
+		glColor4f(1.0f, 0.6547f, 0.0f, 1.0f);
+
+		// Hood
+		drawCircle(0.3f, -0.35f, 0.13f, ecms);
+
+		// Hoodie Bodie
+		glBegin(GL_TRIANGLES);
+
+		glVertex2f(0.0f, -0.6f);
+		glVertex2f(0.6f, -0.6f);
+		glVertex2f(0.3f, -0.25f);
+
+
+		glEnd();
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+
+		// AUT
+		glColor3f(1.0f, 1.0f, 1.0f);
+		glRasterPos2f(0.2f, -0.5f);
+		glutBitmapString(GLUT_BITMAP_HELVETICA_18, "AUT");
 
 		drawFace();
 	}
