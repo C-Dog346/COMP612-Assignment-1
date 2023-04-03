@@ -688,7 +688,6 @@ void drawOutfit(int outfit)
 		glVertex2f(0.6f, -0.6f);
 		glVertex2f(0.3f, -0.25f);
 
-
 		glEnd();
 
 		glMatrixMode(GL_PROJECTION);
