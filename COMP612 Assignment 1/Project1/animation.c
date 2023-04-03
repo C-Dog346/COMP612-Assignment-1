@@ -399,8 +399,6 @@ void keyPressed(unsigned char key, int x, int y)
 			quantity += 250;
 		else
 			quantity = 0;
-
-		printf("%d", quantity);
 		break;
 	case KEY_CYCLE_SNOW_COLOR:
 		if (color < 3)
