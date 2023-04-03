@@ -158,34 +158,8 @@ void display(void)
 
 
 	// Background
-	//// Day
+	// Day
 	glEnable(GL_BLEND);
-	//if (!dayTime) {
-	//	// Sky
-	//	glBegin(GL_QUADS);
-
-	//	glColor4f(skyColorTopDay[0], skyColorTopDay[1], skyColorTopDay[2], skyColorTopDay[3]);
-	//	glVertex2f(-1.0f, -1.0f);
-	//	glVertex2f(1.0f, -1.0f);
-	//	glColor4f(skyColorBottomDay[0], skyColorBottomDay[1], skyColorBottomDay[2], skyColorBottomDay[3]);
-	//	glVertex2f(1.0f, 1.0f);
-	//	glVertex2f(-1.0f, 1.0f);
-
-	//	glEnd();
-	//}
-	//else {
-	//	// Sky
-	//	glBegin(GL_QUADS);
-
-	//	glColor4f(skyColorTopNight[0], skyColorTopNight[1], skyColorTopNight[2], skyColorTopNight[3]);
-	//	glVertex2f(-1.0f, -1.0f);
-	//	glVertex2f(1.0f, -1.0f);
-	//	glColor4f(skyColorBottomNight[0], skyColorBottomNight[1], skyColorBottomNight[2], skyColorBottomNight[3]);
-	//	glVertex2f(1.0f, 1.0f);
-	//	glVertex2f(-1.0f, 1.0f);
-
-	//	glEnd();
-	//}
 
 	glBegin(GL_QUADS);
 
@@ -348,6 +322,7 @@ void keyPressed(unsigned char key, int x, int y)
 		break;
 	case KEY_CYCLE_TIME:
 		dayTime = 1 - dayTime;
+		break;
 	}
 }
 
@@ -729,19 +704,28 @@ void think(void)
 
 	// Update background if time has been changed
 
-	if (dayTime && skyColorTop[3] > 0.1f) 
+	if (dayTime && skyColorTop[0] > skyColorTopNight[0])
 	{
-		skyColorTop[0] -= (skyColorTopDay[0] - skyColorTopNight[0]) / 10;
-		skyColorTop[1];
-		skyColorTop[2];
+		skyColorTop[0] -= (skyColorTopDay[0] - skyColorTopNight[0]) / 100;
+		skyColorTop[1] -= (skyColorTopDay[1] - skyColorTopNight[1]) / 100;
+		skyColorTop[2] -= (skyColorTopDay[2] - skyColorTopNight[2]) / 100;
+
+		skyColorBottom[0] -= (skyColorBottomDay[0] - skyColorBottomNight[0]) / 100;
+		skyColorBottom[1] -= (skyColorBottomDay[1] - skyColorBottomNight[1]) / 100;
+		skyColorBottom[2] -= (skyColorBottomDay[2] - skyColorBottomNight[2]) / 100;
 		
 		skyColorBottom[3] -= 0.01f;
 	}
-	else if (!dayTime && skyColorTop[3] < 1.0f) 
+	else if (!dayTime && skyColorTop[0] < skyColorTopDay[0])
 	{
-		skyColorTop[0];
-		skyColorTop[1];
-		skyColorTop[2];
+		skyColorTop[0] += (skyColorTopDay[0] - skyColorTopNight[0]) / 100;
+		skyColorTop[1] += (skyColorTopDay[1] - skyColorTopNight[1]) / 100;
+		skyColorTop[2] += (skyColorTopDay[2] - skyColorTopNight[2]) / 100;
+
+		skyColorBottom[0] += (skyColorBottomDay[0] - skyColorBottomNight[0]) / 100;
+		skyColorBottom[1] += (skyColorBottomDay[1] - skyColorBottomNight[1]) / 100;
+		skyColorBottom[2] += (skyColorBottomDay[2] - skyColorBottomNight[2]) / 100;
+
 		skyColorBottom[3] += 0.01f;
 	}
 		
